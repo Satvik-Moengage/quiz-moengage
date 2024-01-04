@@ -17,12 +17,17 @@ async function getUserDetail(req, res) {
 
     try {
         const user = await userRepo.fetch(userId);
+
+        console.log(user)
         // Return the fetched user
         return res.status(200).json({
             id: user.entityId,
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            quizzesEnrolled:user.quizzesEnrolled,
+            quizzesTaken:user.quizzesTaken
+
         });
     } catch (err) {
         console.log(err);
