@@ -12,7 +12,6 @@ export default NextAuth({
             async authorize(credentials) {
                 const client = new Client();
                 // await client.open('redis://localhost:6379')
-                console.log(process.env.REDIS_URL)
                 await client.open(process.env.REDIS_URL)
                 try {
             
@@ -26,7 +25,6 @@ export default NextAuth({
                         .return.first()
     
                     if (!user) {
-                        console.log('User not found')
                         throw new Error('User not found')
                     }
     

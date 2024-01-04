@@ -4,7 +4,6 @@ import {
     Box,
     Flex,
     Text,
-    Avatar,
     Accordion,
     AccordionItem,
     AccordionButton,
@@ -62,11 +61,6 @@ export default function Results() {
                             justifyContent={"space-between"}
                         >
                             <Flex alignItems={"center"}>
-                                <Avatar
-                                    size="lg"
-                                    mr={5}
-                                    src={"https://source.unsplash.com/random"}
-                                />
                                 <Text fontSize={"xl"}>
                                     {attemptInfo?.quizTitle}
                                 </Text>

@@ -12,7 +12,6 @@ async function getUsersLeaderboard(req, res) {
     const redis = new RedisClient();
     const client = await redis.initClient()
     const { quizId } = req.query;
-    console.log(quizId)
 
     try {
         const quizTakenRepo = client.fetchRepository(QuizTakenSchema);
@@ -23,8 +22,6 @@ async function getUsersLeaderboard(req, res) {
             .where("quizId")
             .equals(quizId)
             .return.all()
-
-        // console.log(users)
 
         // convert each user item to JSON
         users = users.map(user => user.toJSON())

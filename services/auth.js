@@ -11,7 +11,6 @@ const register = async (userData) => {
         };
 
         let resp = await axios.post(`/api/user`, userData, config);
-        console.log(resp.data)
         return resp.data;
     } catch (err) {
         console.log(err);

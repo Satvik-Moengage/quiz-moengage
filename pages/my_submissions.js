@@ -5,7 +5,6 @@ import {
     IconButton,
     Heading,
     Text,
-    Avatar,
     HStack,
     Tooltip,
 } from "@chakra-ui/react";
@@ -21,7 +20,6 @@ const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export default function MySubmissions() {
     const { data: attempts } = useSWR("/api/quiz/submissions", fetcher);
-    console.log(attempts);
 
     return (
         <Box px={8}>
@@ -51,11 +49,6 @@ const QuizItem = ({ attempt }) => {
             </Head>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar
-                        size="xl"
-                        mr={5}
-                        src={"https://source.unsplash.com/random"}
-                    />
                     {/* To add a push state */}
                     <Flex
                         alignItems={"flex-start"}

@@ -31,7 +31,6 @@ export default function JoinQuiz({ open, setOpen }) {
         } else {
             // send patch request
             enrollToQuizCode(code).then((data) => {
-                console.log(data);
                 if (data?.error){
                     toast({
                         title: "Error",

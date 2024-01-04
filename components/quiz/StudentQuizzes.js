@@ -6,7 +6,6 @@ import {
     IconButton,
     Heading,
     Text,
-    Avatar,
     HStack,
     Tooltip,
     useToast,
@@ -54,7 +53,6 @@ const QuizItem = ({ quiz, user }) => {
     const start = () => {
         startQuiz(quiz.entityId, user.id)
             .then((data) => {
-                console.log(data)
                 if (data?.error) {
                     toast({
                         title: "Error",
@@ -91,11 +89,6 @@ const QuizItem = ({ quiz, user }) => {
         <Box mb={6}>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar
-                        size="xl"
-                        mr={5}
-                        src={"https://source.unsplash.com/random"}
-                    />
                     {/* To add a push state */}
                     <Text
                         fontSize={"3xl"}

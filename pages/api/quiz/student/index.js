@@ -18,7 +18,6 @@ async function getCachedQuiz(req, res) {
     // Convert the questions to JSON
     quizData = JSON.parse(quizData);
     // log the questions
-    console.log(quizData);
 
     return res.status(200).json(quizData);
 }

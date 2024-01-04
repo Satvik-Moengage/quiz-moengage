@@ -1,7 +1,6 @@
 import {
     Heading,
     Flex,
-    Avatar,
     Box,
     Text,
     SimpleGrid,
@@ -13,15 +12,9 @@ import { useRouter } from "next/router";
 const Info = ({ quiz }) => {
     const router = useRouter();
     let schd = new Date(quiz?.scheduledFor?.replace("Z", ""));
-    console.log(schd);
     return (
         <Card>
             <Flex alignItems={"center"}>
-                <Avatar
-                    size={"2xl"}
-                    mr={5}
-                    src={"https://source.unsplash.com/random"}
-                />
                 <Heading>{quiz?.title}</Heading>
             </Flex>
             <Box mt={2}>

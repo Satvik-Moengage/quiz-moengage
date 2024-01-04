@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
+
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -235,12 +235,6 @@ const ResponsiveAppBar = () => {
                                 onClick={handleOpenUserMenu}
                                 sx={{ p: 0 }}
                             >
-                                <Avatar
-                                    alt={data?.user?.name}
-                                    src={`https://avatars.dicebear.com/api/adventurer/${data?.user?.name
-                                        .toLowerCase()
-                                        .replaceAll(" ", "")}.svg`}
-                                />
                             </IconButton>
                         </Tooltip>
                         <Menu

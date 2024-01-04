@@ -4,7 +4,6 @@ import {
     IconButton,
     Heading,
     Text,
-    Avatar,
     Tooltip,
     Tag,
 } from "@chakra-ui/react";
@@ -42,13 +41,6 @@ const UserItem = ({ user }) => {
             </Head>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar
-                        size="lg"
-                        mr={5}
-                        src={`https://avatars.dicebear.com/api/adventurer/${user?.name
-                            .toLowerCase()
-                            .replaceAll(" ", "")}.svg`}
-                    />
                     {/* To add a push state */}
                     <Flex
                         alignItems={"flex-start"}

@@ -46,7 +46,6 @@ export default function CreateQuestion() {
 
         createQuestion(quizId, questionData)
             .then((data) => {
-                console.log(data)
                 if (data?.message) {
                     resetForm();
                     toast({ title: "Success", description: data?.message, status: "success", duration: 9000, isClosable: true });

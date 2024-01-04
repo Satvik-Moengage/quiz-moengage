@@ -11,7 +11,6 @@ export default async function handler(req, res) {
 }
 
 async function createUser(req, res) {
-    console.log(req.body);
     const client = new Client();
     // await client.open('redis://localhost:6379')
     await client.open(process.env.REDIS_URL);

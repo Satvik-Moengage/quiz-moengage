@@ -34,8 +34,8 @@ class User extends Entity {
         this.quizzesEnrolled.push(quizId);
     }
 
-    addQuizTaken(quizTakenId) {
-        this.quizzesTaken.push(quizTakenId);
+    addQuizTaken(quizId) {
+        this.quizzesTaken.push(quizId);
     }
 
     removeQuizEnrolled(quizId) {
@@ -54,8 +54,8 @@ const userSchema = new Schema(
         salt: { type: "string" },
         isAdmin: { type: "boolean" },
         createdAt: { type: "date", sortable: "true" },
-        quizzesEnrolled: { type: "string[]" }, // ensure to initiate it as empty ie []
-        quizzesTaken: { type: "string[]" }, // ensure to initiate it as empty ie []
+        quizzesEnrolled: { type: "string[]" },
+        quizzesTaken: { type: "string[]" }, 
     },
     {
         prefix: "quiza:redis-om-node:user",

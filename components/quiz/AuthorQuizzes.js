@@ -5,7 +5,6 @@ import {
     IconButton,
     Heading,
     Text,
-    Avatar,
     HStack,
     Tooltip,
     useToast,
@@ -76,11 +75,6 @@ const QuizItem = ({ quiz }) => {
         <Box mb={6}>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar
-                        size="xl"
-                        mr={5}
-                        src={"https://source.unsplash.com/random"}
-                    />
                     {/* To add a push state */}
                     <Text
                         fontSize={"3xl"}

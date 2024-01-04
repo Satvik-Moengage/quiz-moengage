@@ -4,7 +4,6 @@ import {
     SimpleGrid,
     GridItem,
     Flex,
-    Avatar,
     Text,
 } from "@chakra-ui/react";
 import Card from "../components/Card";
@@ -38,13 +37,6 @@ export default function UserProfile () {
                     <GridItem colSpan={{ base: "auto", md: 4 }}>
                         <Card>
                             <Flex alignItems={"center"}>
-                                <Avatar
-                                    size={"2xl"}
-                                    mr={5}
-                                    src={`https://avatars.dicebear.com/api/adventurer/${data?.name
-                                        .toLowerCase()
-                                        .replaceAll(" ", "")}.svg`}
-                                />
                                 <Heading>{data?.name}</Heading>
                             </Flex>
                         </Card>

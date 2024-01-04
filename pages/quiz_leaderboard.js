@@ -4,7 +4,6 @@ import {
     IconButton,
     Heading,
     Text,
-    Avatar,
     Tooltip,
     Tag,
 } from "@chakra-ui/react";
@@ -25,9 +24,7 @@ const getPercentageScore = (score, totalResponses) =>
 export default function QuizLeaderBoard() {
     const router = useRouter();
     const { quizId } = router.query;
-    console.log(router.query)
     const { data: users } = useSWR(`/api/quiz/submissions/leaderboard/${quizId}`, fetcher);
-    console.log(users)
     const { data } = useSession;
 
     return (
@@ -55,12 +52,6 @@ const UserItem = ({ user, isLoggedInUserAdmin }) => {
         <Box mb={6}>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar
-                        size="lg"
-                        mr={5}
-                        src={`https://avatars.dicebear.com/api/adventurer/${user?.userName?.toLowerCase()
-                            .replaceAll(" ", "")}.svg`}
-                    />
                     {/* To add a push state */}
                     <Flex
                         alignItems={"flex-start"}

@@ -23,8 +23,6 @@ async function startQuiz(req, res) {
     const quizId = slug[0];
     const userId = slug[1];
 
-    console.log(process.env.REDIS_URL);
-
     const redis = new RedisClient();
     const client = await redis.initClient();
 
@@ -52,8 +50,11 @@ async function startQuiz(req, res) {
             });
         }
 
+        console.log("Hi")
+
+        // console.log(user.quizzesTaken)
+
         // Confirm if the quiz has started
-        console.log(new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")))
 
         if (
             new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")) >=
@@ -79,7 +80,6 @@ async function startQuiz(req, res) {
         await client.execute(["SET", userId, JSON.stringify(quizData)]);
         // add the cache expiry of a max of 1hr
         await client.execute(["EXPIRE", userId, 3600]);
-        // console.log(resp)
 
         /**
          * Get the questions and return them to frontend without the correct answer

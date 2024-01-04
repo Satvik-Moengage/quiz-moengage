@@ -38,7 +38,6 @@ async function getQuizzes(req, res) {
 }
 
 async function createQuiz(req, res) {
-    console.log(req.body);
 
     const redis = new RedisClient();
     const client = await redis.initClient();

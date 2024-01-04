@@ -90,7 +90,6 @@ export default function Quiz (){
 
     const handleChange = (event) => {
         setCurrentAns(event);
-        console.log(currentAns);
 
         let newState = allAns;
         newState[currentQuestion].selectedOption = event;
@@ -140,7 +139,6 @@ export default function Quiz (){
         var quizDuration = 0;
 
         if (questions?.length === 0) {
-            console.log("Empty");
             return;
         }
 
@@ -151,7 +149,6 @@ export default function Quiz (){
             };
 
             questionsData.push(questObj);
-            console.log("Tried");
 
             let ansObj = {
                 selectedOption: null,
@@ -170,7 +167,6 @@ export default function Quiz (){
     useEffect(() => {
         if (data) {
             setupQuiz(data.questions, data.duration);
-            console.log("did that");
         }
     }, [data]);
 

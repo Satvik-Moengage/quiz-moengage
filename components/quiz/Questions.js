@@ -38,7 +38,6 @@ const validateUser = (currentUserId, authorUserId) =>
 const Questions = ({ quiz }) => {
     const { data: session } = useSession();
     const router = useRouter()
-    console.log(quiz)
 
     const { data: questions } = useSWR(
         () => `/api/question/creating/${quiz?.id}`,

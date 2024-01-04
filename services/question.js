@@ -3,7 +3,6 @@ const BASE_URL = "/api/question";
 
 export const createQuestion = async (quizId, questionData) => {
     try {
-        console.log(quizId)
         const config = {
             headers: {
                 Accept: "application/json",
