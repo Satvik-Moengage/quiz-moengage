@@ -49,7 +49,7 @@ export default function Results() {
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>
-                <title>Quiza | Results</title>
+                <title>Quiz Platform | Results</title>
             </Head>
             <Heading py={5}>Results</Heading>
             {loading ? (

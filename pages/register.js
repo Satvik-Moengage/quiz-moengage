@@ -83,11 +83,11 @@ export default function Register() {
             fontFamily={"Poppins"}
         >
         <Head>
-                <title>Quiza | Register</title>
+                <title>Quiz Platform | Register</title>
             </Head>
             <Stack spacing={8} mx={"auto"} w={"600px"}>
                 <Stack align={"center"}>
-                    <Heading fontSize={"4xl"}>Get Started with Quiza</Heading>
+                    <Heading fontSize={"4xl"}>Get Started with Quiz</Heading>
                     <Text fontSize={"lg"} color={"gray.600"}>
                         Create an account
                     </Text>

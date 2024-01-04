@@ -93,7 +93,7 @@ export default function CreateQuiz() {
     return (
         <Box>
             <Head>
-                <title>Quiza | Create Quiz</title>
+                <title>Quiz Platform | Create Quiz</title>
             </Head>
             <Flex
                 justify={"center"}
@@ -103,7 +103,7 @@ export default function CreateQuiz() {
             >
                 <Stack spacing={8} mx={"auto"} w={"450px"}>
                     <Stack align={"center"}>
-                        <Heading fontSize={"4xl"}>Create Quiza</Heading>
+                        <Heading fontSize={"4xl"}>Create Quiz</Heading>
                     </Stack>
                     <Box
                         rounded={"lg"}

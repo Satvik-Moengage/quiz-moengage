@@ -75,14 +75,14 @@ export default function Navbar() {
                         </Box>
                         <chakra.a
                             href="/"
-                            title="Quiza"
+                            title="Quiz Platform"
                             display="flex"
                             alignItems="center"
                         >
-                            <Icon as={SiSwarm} w={8} h={8} />
-                            <VisuallyHidden>Quiza</VisuallyHidden>
+                            {/* <Icon as={SiSwarm} w={8} h={8} /> */}
+                            <VisuallyHidden>Quiz Platform</VisuallyHidden>
                         </chakra.a>
-                        <chakra.h1 fontSize="xl">Quiza</chakra.h1>
+                        <chakra.h1 fontSize="xl">Quiz Platform</chakra.h1>
                     </HStack>
                     <HStack spacing={3} display="flex" alignItems="center">
                         {!data?.user?.isAdmin && (
@@ -132,7 +132,7 @@ export default function Navbar() {
                             _focus={{ boxShadow: "none" }}
                             onClick={() => router.replace("/quizzes")}
                         >
-                            Quizas
+                            Quiz Platform
                         </Tab>
                         <Tab
                             py={4}
@@ -140,7 +140,7 @@ export default function Navbar() {
                             _focus={{ boxShadow: "none" }}
                             onClick={() => router.replace("/my_quizzes")}
                         >
-                            My Quizas
+                            My Quizzes
                         </Tab>
                         {!data?.user?.isAdmin && (
                             <Tab
@@ -164,7 +164,7 @@ export default function Navbar() {
                                         router.replace("/create_quiz")
                                     }
                                 >
-                                    Create Quiza
+                                    Create Quiz
                                 </Tab>
                                 <Tab
                                     py={4}

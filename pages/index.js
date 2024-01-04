@@ -18,7 +18,7 @@ export default function Home () {
     return (
         <Box mx="auto" h={"100vh"} bg={"#1a202c"}>
             <Head>
-                <title>Quiza | Home</title>
+                <title>Quiz Platform | Home</title>
             </Head>
             <SimpleGrid
                 columns={{ base: 1, md: 2 }}
@@ -61,7 +61,7 @@ export default function Home () {
                             display={{ base: "block", xl: "inline" }}
                             color={"#cbceeb"}
                         >
-                            Welcome to Quiza{" "}
+                            Welcome to Quiz Platform{" "}
                         </chakra.span>
                     </chakra.h1>
                     <chakra.p
@@ -72,7 +72,7 @@ export default function Home () {
                         color="gray.500"
                         lineHeight="base"
                     >
-                        Practise and set up quizzes in our Quiza Cloud Platform.
+                        Practise and set up quizzes in our Quiz Platform.
                     </chakra.p>
                     <Stack
                         direction={{

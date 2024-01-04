@@ -47,7 +47,7 @@ const QuizItem = ({ attempt }) => {
     return (
         <Box mb={6}>
             <Head>
-                <title>Quiza | My Submissions</title>
+                <title>Quiz Platform | My Submissions</title>
             </Head>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>

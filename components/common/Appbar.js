@@ -70,7 +70,7 @@ const ResponsiveAppBar = () => {
                             textDecoration: "none",
                         }}
                     >
-                        Quiza
+                        Quiz
                     </Typography>
 
                     <Box
@@ -172,7 +172,7 @@ const ResponsiveAppBar = () => {
                             textDecoration: "none",
                         }}
                     >
-                        Quiza
+                        Quiz
                     </Typography>
                     <Box
                         sx={{

@@ -38,7 +38,7 @@ const UserItem = ({ user }) => {
     return (
         <Box mb={6}>
             <Head>
-                <title>Quiza | Users</title>
+                <title>Quizzes | Users</title>
             </Head>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>

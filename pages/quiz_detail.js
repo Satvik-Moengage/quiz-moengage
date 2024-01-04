@@ -27,7 +27,7 @@ export default function QuizDetails (){
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>
-                <title>Quiza | Quiz Details</title>
+                <title>Quiz Platform | Quiz Details</title>
             </Head>
             <Heading py={5}>Quiz Details</Heading>
             <Box py={2} mx="auto">

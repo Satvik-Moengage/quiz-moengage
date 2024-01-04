@@ -25,7 +25,7 @@ export default function UserProfile () {
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
         <Head>
-                <title>Quiza | User Profile</title>
+                <title>Quiz Platform | User Profile</title>
             </Head>
             <Heading py={5}>Profile</Heading>
             <Box py={2} mx="auto">
@@ -103,7 +103,7 @@ export default function UserProfile () {
                                         fontSize="sm"
                                         textTransform={"uppercase"}
                                     >
-                                        Quizas Enrolled
+                                        Quizzes Enrolled
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
                                         14
@@ -116,7 +116,7 @@ export default function UserProfile () {
                                         fontSize="sm"
                                         textTransform={"uppercase"}
                                     >
-                                        Quizas Submitted
+                                        Quizzes Submitted
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
                                         12

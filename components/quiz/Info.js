@@ -49,7 +49,7 @@ const Info = ({ quiz }) => {
                             fontSize="sm"
                             textTransform={"uppercase"}
                         >
-                            Quiza Code
+                            Quiz Code
                         </Text>
                         <Text color={"gray.900"} fontSize={"md"}>
                             {quiz?.quizCode}

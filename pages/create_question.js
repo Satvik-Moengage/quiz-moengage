@@ -86,7 +86,7 @@ export default function CreateQuestion() {
     return (
         <Box>
             <Head>
-                <title>Quiza | Create Question</title>
+                <title>Quiz Platform | Create Question</title>
             </Head>
             <Flex
                 justify={"center"}
