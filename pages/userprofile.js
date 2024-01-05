@@ -98,7 +98,7 @@ export default function UserProfile () {
                                         Quizzes Enrolled
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                        14
+                                    {data?.name}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -111,7 +111,7 @@ export default function UserProfile () {
                                         Quizzes Submitted
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                        12
+                                    {data?.name}
                                     </Text>
                                 </Box>
                             </SimpleGrid>

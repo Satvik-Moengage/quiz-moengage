@@ -23,6 +23,8 @@ export default NextAuth({
                         .where('email')
                         .equals(credentials.email)
                         .return.first()
+
+                    console.log(user);
     
                     if (!user) {
                         throw new Error('User not found')
@@ -37,6 +39,9 @@ export default NextAuth({
                         name: user.name,
                         email: user.email,
                         isAdmin: user.isAdmin,
+                        quizzesEnrolled: user.quizzesEnrolled,
+                        quizzesTaken: user.quizzesTaken,
+
                     }
                 } catch (err) {
                     console.log(err)

@@ -32,7 +32,7 @@ export default function QuizLeaderBoard() {
             <Head>
                 <title>Quiz Platform | Leaderboard</title>
             </Head>
-            <Heading py={5}>Users</Heading>
+            <Heading py={5}>Submissions</Heading>
             <Card>
                 {users?.map((quizParticipant) => (
                     <UserItem

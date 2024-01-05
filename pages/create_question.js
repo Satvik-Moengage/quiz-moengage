@@ -87,8 +87,8 @@ export default function CreateQuestion() {
                                 </Select>
                             </FormControl>
                             <FormControl id="description" as={GridItem} colSpan={6}>
-                                <FormLabel>Description</FormLabel>
-                                <Textarea placeholder="Type Description here ..." size="md" onChange={(e) => setDescription(e.target.value)} />
+                                <FormLabel>Question</FormLabel>
+                                <Textarea placeholder="Type Question here ..." size="md" onChange={(e) => setDescription(e.target.value)} />
                             </FormControl>
 
                             {questionType === 'mcq' ? (
