@@ -1,7 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { Client } from "redis-om"
-import { UserSchema } from "../../../schemas"
+import mongoose from "mongoose";
+import { UserSchema } from "../../../schemas";
+
 
 export default NextAuth({
     session: {
@@ -10,44 +11,31 @@ export default NextAuth({
     providers: [
         CredentialsProvider({
             async authorize(credentials) {
-                const client = new Client();
-                // await client.open('redis://localhost:6379')
-                await client.open(process.env.REDIS_URL)
+                await mongoose.connect(process.env.MONGODB_URL, {
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true,
+                });
                 try {
-            
-                    const userRepo = client.fetchRepository(UserSchema);
-    
-                    await userRepo.createIndex();
-    
-                    const user = await userRepo.search()
-                        .where('email')
-                        .equals(credentials.email)
-                        .return.first()
-
-                    console.log(user);
-    
+                    const user = await UserSchema.findOne({ email: credentials.email });
                     if (!user) {
-                        throw new Error('User not found')
+                        throw new Error('User not found');
                     }
-    
                     if (!user.authenticate(credentials.password)) {
-                        throw new Error('Invalid email or password')
+                        throw new Error('Invalid email or password');
                     }
-    
                     return {
-                        id: user.entityId,
+                        id: user._id,
                         name: user.name,
                         email: user.email,
                         isAdmin: user.isAdmin,
                         quizzesEnrolled: user.quizzesEnrolled,
                         quizzesTaken: user.quizzesTaken,
-
                     }
                 } catch (err) {
                     console.log(err)
                     throw new Error(err)
                 } finally {
-                    await client.close()
+                    await db.disconnectClient();
                 }
             }
         })

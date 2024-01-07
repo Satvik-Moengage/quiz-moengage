@@ -1,5 +1,5 @@
+import MongoDbClient from "../../../../utils/mongo_client";
 import { QuizSchema } from "../../../../schemas";
-import RedisClient from "../../../../utils/redis_client";
 
 
 export default async function handler(req, res) {
@@ -12,26 +12,19 @@ export default async function handler(req, res) {
 async function getQuizzesByAuthor(req, res) {
     const { userId } = req.query;
 
-    const redis = new RedisClient()
-    const client = await redis.initClient();
-
-    const quizRepo = client.fetchRepository(QuizSchema)
-
-    await quizRepo.createIndex()
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const quizzes = await quizRepo.search()
-            .where('authorId')
-            .equals(userId)
-            .return.all()
+        const quizzes = await QuizSchema.find({ authorId: userId });
 
-        return res.status(200).json(quizzes)
+        return res.status(200).json(quizzes);
     } catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(400).json({
             message: 'An error was encountered'
-        })
+        });
     } finally {
-        await redis.disconnectClient()
+        await db.disconnectClient();
     }
 }

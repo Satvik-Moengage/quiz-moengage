@@ -15,6 +15,7 @@
     "@fontsource/poppins": "^4.5.9",
     "axios": "^0.27.2",
     "framer-motion": "^6",
+    "mongoose": "^8.0.3",
     "next": "12.2.5",
     "next-auth": "^4.10.3",
     "react": "18.2.0",

@@ -1,12 +1,9 @@
-import { Entity, Schema } from "redis-om"
+import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-class Attempt extends Entity { }
-
-const attemptSchema = new Schema(Attempt, {
-    quizId: { type: 'string' },
-    userId: { type: 'string' },
-}, {
-    prefix: 'quiz:redis-om-node:attempt'
+const Attempt = new Schema({
+    quizId: { type: String },
+    userId: { type: String }
 });
 
-export default attemptSchema;
+export default mongoose.models.Attempt || mongoose.model('Attempt', Attempt);

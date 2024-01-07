@@ -1,38 +1,36 @@
-import { Entity, Schema } from "redis-om"
+import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-class Quiz extends Entity {
-    addQuizTaken(quizId) {
-        this.quizTaken.push(quizId)
-    }
 
-    addUserEnrolled(userId) {
-        this.usersEnrolled.push(userId)
-    }
-
-    removeUserEnrolled(userId){
-        this.usersEnrolled = this.usersEnrolled.filter(item => item !== userId)
-    }
-
-    updateDetails(description, title, duration){
-        this.description = description
-        this.title = title
-        this.duration = duration
-    }
-};
-
-const quizSchema = new Schema(Quiz, {
-    title: { type: 'string' },
-    quizCode: { type: 'string' },
-    duration: { type: 'number' },
-    description: { type: 'string' },
-    authorId: { type: 'string' },
-    quizTaken: { type: 'string[]' }, // array of quizTake ids who took the quiz, quizTaken has quizId, UserId, score, responses
-    usersEnrolled: { type: 'string[]' }, // ensure to initiate as empty array []
-    createdAt: { type: 'date' },
-    scheduledFor: { type: 'date' },
-    quizType: { type: 'string' } // quiz type can be private or public, for private they use a quizCode to join
-}, {
-    prefix: 'quiza:redis-om-node:quiz'
+const Quiz = new Schema({
+    title: { type: String },
+    quizCode: { type: String },
+    duration: { type: Number },
+    description: { type: String },
+    authorId: { type: String },
+    quizTaken: { type: [String] }, // array of quizTake ids who took the quiz, quizTaken has quizId, UserId, score, responses
+    usersEnrolled: { type: [String] }, // ensure to initiate as empty array []
+    createdAt: { type: Date },
+    scheduledFor: { type: Date },
+    quizType: { type: String } // quiz type can be private or public, for private they use a quizCode to join
 });
 
-export default quizSchema
+Quiz.methods.addQuizTaken = function(quizId) {
+    this.quizTaken.push(quizId);
+}
+
+Quiz.methods.addUserEnrolled = function(userId) {
+    this.usersEnrolled.push(userId);
+}
+
+Quiz.methods.removeUserEnrolled = function(userId){
+    this.usersEnrolled = this.usersEnrolled.filter(item => item !== userId);
+}
+
+Quiz.methods.updateDetails = function(description, title, duration){
+    this.description = description;
+    this.title = title;
+    this.duration = duration;
+}
+
+export default mongoose.models.Quiz || mongoose.model('Quiz', Quiz);

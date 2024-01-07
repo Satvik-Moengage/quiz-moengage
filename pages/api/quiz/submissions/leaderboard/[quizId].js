@@ -1,5 +1,6 @@
-import RedisClient from "../../../../../utils/redis_client";
-import { QuizTakenSchema } from "../../../../../schemas";
+
+import {QuizTakenSchema} from "../../../../../schemas";
+import MongoDbClient from "../../../../../utils/mongo_client";
 
 export default async function handler(req, res){
     switch (req.method){
@@ -9,22 +10,15 @@ export default async function handler(req, res){
 }
 
 async function getUsersLeaderboard(req, res) {
-    const redis = new RedisClient();
-    const client = await redis.initClient()
     const { quizId } = req.query;
 
+    const db = new MongoDbClient();
+    await db.initClient();
+
     try {
-        const quizTakenRepo = client.fetchRepository(QuizTakenSchema);
 
-        await quizTakenRepo.createIndex();
+        let users = await QuizTakenSchema.find({ quizId: quizId })
 
-        let users = await quizTakenRepo.search()
-            .where("quizId")
-            .equals(quizId)
-            .return.all()
-
-        // convert each user item to JSON
-        users = users.map(user => user.toJSON())
         // sort by score
         users = users.sort((a,b) => b.score - a.score)
         
@@ -35,6 +29,6 @@ async function getUsersLeaderboard(req, res) {
             error: `An error was encountered`,
         });
     } finally {
-        await client.close();
+        await db.disconnectClient();
     }
 }

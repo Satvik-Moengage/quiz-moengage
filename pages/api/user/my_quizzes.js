@@ -1,6 +1,8 @@
-import { QuizSchema } from "../../../schemas";
-import RedisClient from "../../../utils/redis_client";
+
+
 import { getSession } from "next-auth/react";
+import { QuizSchema } from "../../../schemas";
+import MongoDbClient from "../../../utils/mongo_client";
 
 export default async function handler(req, res){
     switch(req.method){
@@ -10,21 +12,16 @@ export default async function handler(req, res){
 }
 
 async function myAuthoredQuizzes(req, res){
-    const redis = new RedisClient()
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     const session = await getSession({req})
-    const userId = session?.user?.id;
-
+    console.log(session)
+    const userId = session?.user?._id;
+    console.log(userId)
     try {
-        const quizRepo = await client.fetchRepository(QuizSchema)
-        await quizRepo.createIndex()
-
-        const quizzes = await quizRepo.search()
-            .where('authorId')
-            .equals(userId)
-            .return.all()
-
+        const quizzes = await QuizSchema.find({authorId: userId})
+        console.log(quizzes)
         return res.status(200).json(quizzes)
 
     } catch (err) {
@@ -33,6 +30,6 @@ async function myAuthoredQuizzes(req, res){
             message:`An error was encountured`
         })
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

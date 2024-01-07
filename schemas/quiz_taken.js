@@ -1,21 +1,15 @@
-import { Entity, Schema } from "redis-om";
+import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-class QuizTaken extends Entity {}
 
-const quizTakenSchema = new Schema(
-    QuizTaken,
-    {
-        userId: { type: "string" },
-        userName: { type: "string" }, // name of the user taking the quiz
-        score: { type: "number" },
-        responses: { type: "string[]" },
-        quizId: { type: "string" },
-        attemptId: { type: "string" },
-        quizTitle: { type: "string" },
-    },
-    {
-        prefix: "quiza:redis-om-node:quizTaken",
-    }
-);
+const QuizTaken = new Schema({
+    userId: { type: String },
+    userName: { type: String }, // name of the user taking the quiz
+    score: { type: Number },
+    responses: { type: [String] },
+    quizId: { type: String },
+    attemptId: { type: String },
+    quizTitle: { type: String }
+});
 
-export default quizTakenSchema;
+export default mongoose.models.QuizTaken || mongoose.model('QuizTaken', QuizTaken);

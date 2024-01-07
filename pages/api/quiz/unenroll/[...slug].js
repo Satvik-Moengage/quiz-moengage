@@ -1,5 +1,5 @@
-import RedisClient from "../../../../utils/redis_client";
-import { UserSchema, QuizSchema } from "../../../../schemas";
+import MongoDbClient from "../../../../utils/mongo_client";
+import {UserSchema, QuizSchema} from "../../../../schemas";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -9,39 +9,48 @@ export default async function handler(req, res) {
 }
 
 async function unenroll(req, res) {
-    const redis = new RedisClient()
-    const client = await redis.initClient();
+    const { slug } = req.query;
+    const quizId = slug[0];
+    const userId = slug[1];
 
-    const { slug } = req.query
-
-    const quizId = slug[0]
-    const userId = slug[1]
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const quizRepo = client.fetchRepository(QuizSchema)
-        const userRepo = client.fetchRepository(UserSchema)
-
         // fetch the quiz and user
-        const quiz = await quizRepo.fetch(quizId)
-        const user = await userRepo.fetch(userId);
+        const quiz = await QuizSchema.findById(quizId);
+        const user = await UserSchema.findById(userId);
 
-        // Remove from quiz and user models
-        quiz.removeUserEnrolled(userId)
-        user.removeQuizEnrolled(quizId)
+        // removing user from quiz
+        let index = quiz.usersEnrolled.indexOf(userId);
+        if (index > -1) {
+            quiz.usersEnrolled.splice(index, 1);
+        }
 
-        await quizRepo.save(quiz)
-        await userRepo.save(user)
+        // removing quiz from user
+        index = user.quizzesEnrolled.indexOf(quizId);
+        if (index > -1) {
+            user.quizzesEnrolled.splice(index, 1);
+        }
+
+        await quiz.save();
+        await user.save();
 
         return res.status(200).json({
             message: 'User successfully unenrolled from quiz'
-        })
+        });
 
-    } catch (err) {
-        console.log(err)
+    } catch ( err) {
+        console.log(err);
         return res.status(400).json({
-            message: 'An error was encountured'
+            message: 'An error was encountered'
         });
     } finally {
-        await redis.disconnectClient()
+        await db.disconnectClient();
     }
-}
+    }
+    
+    
+    
+    
+    

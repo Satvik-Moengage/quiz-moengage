@@ -1,4 +1,4 @@
-import RedisClient from "../../../../utils/redis_client"
+import MongoDbClient from "../../../../utils/mongo_client";
 import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
@@ -9,13 +9,18 @@ export default async function handler(req, res) {
 }
 
 async function reset(req, res) {
-    const redis = new RedisClient()
     const session = await getSession({ req });
 
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        await client.execute(["DEL", (await session).user.id.toString()]); // the quizData already saved in redis
+        // Here, we are assuming there is a field in the User schema called 'quizData' where the data is stored.
+        // Replace 'User' with the actual model used for users.
+        const user = await User.findById(session.user._id);
+        user.quizData = null;
+        await user.save();
+
         return res.status(200).json({
             message: "Quiz reset successfully",
         });
@@ -25,6 +30,6 @@ async function reset(req, res) {
             error: "An error has been encountered",
         });
     } finally {
-        await client.close();
+        await db.disconnectClient();
     }
 }

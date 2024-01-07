@@ -1,4 +1,4 @@
-import RedisClient from "../../../../utils/redis_client";
+import MongoDbClient from "../../../../utils/mongo_client";
 import { QuizSchema, UserSchema } from "../../../../schemas";
 
 export default function handler(req, res) {
@@ -10,33 +10,31 @@ export default function handler(req, res) {
 
 async function enrollUserToQuiz(req, res) {
     const { slug } = req.query;
-    const redis = new RedisClient()
-    const client = await redis.initClient();
+
+    const db = new MongoDbClient();
+    await db.initClient();
 
     let quizId = slug[0];
-    let userId = slug[1];
-
-    const quizRepo = client.fetchRepository(QuizSchema)
-    const userRepo = client.fetchRepository(UserSchema)
-
-    let quiz = await quizRepo.fetch(quizId);
-    let user = await userRepo.fetch(userId);
+    let userId = slug[1 ];
 
     try {
-         // Confirm if user already enrolled
-         if (quiz.usersEnrolled.includes(userId)){
+        let quiz = await QuizSchema.findById(quizId);
+        let user = await UserSchema.findById(userId);
+
+        // Confirm if user already enrolled
+        if (quiz.usersEnrolled.includes(userId)){
             return res.status(409).json({
                 error: `User already enrolled`
             })
         }
 
         // if user not enrolled, add user to enrolled list
-        quiz.addUserEnrolled(userId)
-        user.addQuizEnrolled(quizId)
+        quiz.usersEnrolled.push(userId); 
+        user.quizzesEnrolled.push(quizId);
 
         // save the changes made
-        await quizRepo.save(quiz)
-        await userRepo.save(user)
+        await quiz.save();
+        await user.save();
 
         return res.status(200).json({
             message: 'User enrolled successfully'
@@ -48,6 +46,6 @@ async function enrollUserToQuiz(req, res) {
             error: 'An error was encountered'
         })
     } finally {
-        await redis.disconnectClient()
+        await db.disconnectClient();
     }
 }

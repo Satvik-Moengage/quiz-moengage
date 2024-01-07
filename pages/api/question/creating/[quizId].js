@@ -1,5 +1,5 @@
-import RedisClient from "../../../../utils/redis_client";
-import { QuestionSchema } from "../../../../schemas";
+import MongoDbClient from "../../../../utils/mongo_client";
+import {QuestionSchema} from "../../../../schemas";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -14,57 +14,48 @@ async function createQuestion(req, res) {
     const { quizId } = req.query;
     const { description, options, correctAnswer } = req.body;
 
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const questionRepo = client.fetchRepository(QuestionSchema);
-        const newQuestion = questionRepo.createEntity({
+        const newQuestion = new QuestionSchema({
             quizId: quizId,
             description: description,
             options: options,
-            correctAnswer: correctAnswer,
+            correctAnswer: correctAnswer
         });
 
-        await questionRepo.save(newQuestion); // save the new question
+        await newQuestion.save(); // save the new question
 
         return res.status(200).json({
-            message: "Question added successfully",
+            message: "Question added successfully"
         });
     } catch (err) {
         console.log(err);
         return res.status(400).json({
-            error: "An error was encountered",
+            error: "An error was encountered"
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }
 
 async function getQuestions(req, res) {
     const { quizId } = req.query;
 
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const questionRepo = client.fetchRepository(QuestionSchema);
+        const questions = await QuestionSchema.find({quizId});
 
-        await questionRepo.createIndex(); // init the RedisSearch to allow querying
-
-        const quizzes = await questionRepo
-            .search()
-            .where("quizId")
-            .equals(quizId)
-            .return.all();
-
-        return res.status(200).json(quizzes);
+        return res.status(200).json(questions);
     } catch (err) {
         console.log(err);
         return res.status(400).json({
-            error: "An error was encountured",
+            error: "An error was encountured"
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

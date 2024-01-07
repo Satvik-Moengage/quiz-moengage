@@ -1,5 +1,5 @@
-import RedisClient from "../../../../utils/redis_client";
 import { UserSchema } from "../../../../schemas";
+import MongoDbClient from "../../../../utils/mongo_client";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -9,17 +9,15 @@ export default async function handler(req, res) {
 }
 
 async function getUserDetail(req, res) {
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
     const { userId } = req.query;
 
-    const userRepo = client.fetchRepository(UserSchema);
-
     try {
-        const user = await userRepo.fetch(userId);
+        const user = await UserSchema.findById(userId);
         // Return the fetched user
         return res.status(200).json({
-            id: user.entityId,
+            id: user._id,
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
@@ -33,6 +31,6 @@ async function getUserDetail(req, res) {
             error: "An error was encountered",
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

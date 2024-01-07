@@ -1,6 +1,6 @@
-import RedisClient from "../../../../utils/redis_client";
-import { QuizSchema } from "../../../../schemas";
+import MongoDbClient from "../../../../utils/mongo_client";
 import { getSession } from "next-auth/react";
+import { QuizSchema } from "../../../../schemas";
 
 export default function handler(req, res) {
     switch (req.method) {
@@ -16,15 +16,14 @@ export default function handler(req, res) {
 async function getQuizDetails(req, res) {
     const { quizId } = req.query;
 
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const quizRepo = client.fetchRepository(QuizSchema);
-        const quiz = await quizRepo.fetch(quizId);
+        const quiz = await QuizSchema.findById(quizId);
 
         return res.status(200).json({
-            id: quiz.entityId,
+            id: quiz._id,
             title: quiz.title,
             description: quiz.description,
             quizCode: quiz.quizCode,
@@ -38,23 +37,23 @@ async function getQuizDetails(req, res) {
             message: "An error was encountered",
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }
 
 async function updateDetails(req, res) {
     const { quizId } = req.query;
 
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
+
     const session = await getSession({ req });
-    const userId = session?.user?.id;
+    const userId = session?.user?._id;
 
     const { title, description, duration } = req.body;
 
     try {
-        const quizRepo = client.fetchRepository(QuizSchema);
-        const quiz = await quizRepo.fetch(quizId);
+        const quiz = await QuizSchema.findById(quizId);
 
         // Confirm the user removing is the author
         if (quiz.authorId !== userId) {
@@ -64,10 +63,12 @@ async function updateDetails(req, res) {
         }
 
         // Make changes
-        quiz.updateDetails(description, title, duration);
+        quiz.description = description;
+        quiz.title = title;
+        quiz.duration = duration;
 
         // Save changes
-        await quizRepo.save(quiz);
+        await quiz.save();
 
         return res.status(200).json({
             message: "Quiz Details updated successfully",
@@ -78,21 +79,20 @@ async function updateDetails(req, res) {
             message: "An error was encountered",
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }
 
-async function removeQuiz(req, res) {
+async function removeQuiz (req, res) {
     const { quizId } = req.query;
     const session = await getSession({ req });
-    const userId = session?.user?.id;
+    const userId = session?.user?._id;
 
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const quizRepo = client.fetchRepository(QuizSchema);
-        const quiz = await quizRepo.fetch(quizId);
+        const quiz = await QuizSchema.findById(quizId);
         // Confirm the user removing is the author
         if (quiz.authorId !== userId) {
             return res.status(403).json({
@@ -101,7 +101,7 @@ async function removeQuiz(req, res) {
         }
 
         // Now remove the quiz
-        await quizRepo.remove(quizId);
+        await QuizSchema.findByIdAndDelete(quizId);
 
         return res.status(200).json({
             message: "Quiz removed successfully",
@@ -112,6 +112,6 @@ async function removeQuiz(req, res) {
             message: "An error was encountered",
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

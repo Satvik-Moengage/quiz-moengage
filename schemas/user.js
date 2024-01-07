@@ -1,65 +1,54 @@
-import { Entity, Schema } from "redis-om";
+import { Schema } from "mongoose";
+import mongoose from "mongoose";
 import crypto from "crypto";
 
-class User extends Entity {
-    setPassword(password) {
-        this.salt = this.makeSalt();
-        this.hashed_password = this.encryptPassword(password, this.salt);
-        return this.hashed_password;
-    }
+const User = new Schema({
+    name: { type: String },
+    email: { type: String },
+    hashed_password: { type: String },
+    salt: { type: String },
+    isAdmin: { type: Boolean },
+    createdAt: { type: Date },
+    quizzesEnrolled: { type: [String] },
+    quizzesTaken: { type: [String] }
+});
 
-    makeSalt() {
-        return Math.round(new Date().valueOf() * Math.random());
-    }
+User.methods.setPassword = function(password) {
+    this.salt = this.makeSalt();
+    this.hashed_password = this.encryptPassword(password);
+    return this.hashed_password;
+}
 
-    encryptPassword(password, salt) {
-        if (!password) return "";
-        try {
-            return crypto
-                .createHmac("sha1", salt)
-                .update(password)
-                .digest("hex");
-        } catch (err) {
-            return "";
-        }
-    }
+User.methods.makeSalt = function() {
+    return Math.round(new Date().valueOf() * Math.random()) + '';
+}
 
-    authenticate(plainText) {
-        return (
-            this.encryptPassword(plainText, this.salt) === this.hashed_password
-        );
-    }
-
-    addQuizEnrolled(quizId) {
-        this.quizzesEnrolled.push(quizId);
-    }
-
-    addQuizTaken(quizId) {
-        this.quizzesTaken.push(quizId);
-    }
-
-    removeQuizEnrolled(quizId) {
-        this.quizzesEnrolled = this.quizzesEnrolled.filter(
-            (item) => item !== quizId
-        );
+User.methods.encryptPassword = function(password) {
+    if (!password) return '';
+    try {
+        return crypto
+            .createHmac('sha1', this.salt)
+            .update(password)
+            .digest('hex');
+    } catch (err) {
+        return '';
     }
 }
 
-const userSchema = new Schema(
-    User,
-    {
-        name: { type: "string" },
-        email: { type: "string", normalized: "false" },
-        hashed_password: { type: "string" },
-        salt: { type: "string" },
-        isAdmin: { type: "boolean" },
-        createdAt: { type: "date", sortable: "true" },
-        quizzesEnrolled: { type: "string[]" },
-        quizzesTaken: { type: "string[]" }, 
-    },
-    {
-        prefix: "quiza:redis-om-node:user",
-    }
-);
+User.methods.authenticate = function(plainText) {
+    return this.encryptPassword(plainText) === this.hashed_password;
+}
 
-export default userSchema;
+User.methods.addQuizEnrolled = function(quizId) {
+    this.quizzesEnrolled.push(quizId);
+}
+
+User.methods.addQuizTaken = function(quizId) {
+    this.quizzesTaken.push(quizId);
+}
+
+User.methods.removeQuizEnrolled = function(quizId) {
+    this.quizzesEnrolled = this.quizzesEnrolled.filter((item) => item !== quizId);
+}
+
+export default mongoose.models.User || mongoose.model('User', User);

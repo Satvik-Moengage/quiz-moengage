@@ -1,6 +1,7 @@
-import RedisClient from "../../../utils/redis_client";
-import { QuizSchema } from "../../../schemas";
+
 import { nanoid } from "nanoid";
+import { QuizSchema } from "../../../schemas";
+import MongoDbClient from "../../../utils/mongo_client";
 
 export default function handler(req, res) {
     switch (req.method) {
@@ -12,20 +13,11 @@ export default function handler(req, res) {
 }
 
 async function getQuizzes(req, res) {
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
+
     try {
-        const quizRepo = client.fetchRepository(QuizSchema);
-
-        await quizRepo.createIndex();
-
-        let quizzes = await quizRepo.search()
-            .where('quizType')
-            .equals('public')
-            .return.all();
-
-        
-
+        let quizzes = await QuizSchema.find({quizType: 'public'});
         return res.status(200).json(quizzes);
     } catch (err) {
         console.log(err);
@@ -33,17 +25,15 @@ async function getQuizzes(req, res) {
             message: "An error was encountered",
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }
 
 async function createQuiz(req, res) {
-
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const quizRepo = client.fetchRepository(QuizSchema);
         const {
             title,
             duration,
@@ -53,7 +43,7 @@ async function createQuiz(req, res) {
             scheduledFor,
         } = req.body;
 
-        const newQuiz = quizRepo.createEntity({
+        const newQuiz = new QuizSchema({
             title: title,
             quizCode: nanoid(8),
             duration: parseInt(duration),
@@ -66,11 +56,11 @@ async function createQuiz(req, res) {
             scheduledFor: scheduledFor,
         });
 
-        await quizRepo.save(newQuiz);
+        await newQuiz.save();
 
         return res.status(200).json({
             message: "Quiz Created Successfully",
-            quizId: newQuiz.entityId,
+            quizId: newQuiz._id,
         });
     } catch (err) {
         console.log(err);
@@ -78,6 +68,6 @@ async function createQuiz(req, res) {
             error: `An error was encountered`,
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

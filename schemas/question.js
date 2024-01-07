@@ -1,14 +1,12 @@
-import { Entity, Schema } from "redis-om"
+import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-class Question extends Entity { }
 
-const questionSchema = new Schema(Question, {
-    quizId: { type: 'string' },
-    description: { type: 'string' },
-    options: { type: 'string[]' },
-    correctAnswer: { type: 'string' },
-}, {
-    prefix: 'quiza:redis-om-node:question'
-})
+const Question = new Schema({
+    quizId: { type: String },
+    description: { type: String },
+    options: { type: [String] },
+    correctAnswer: { type: String }
+});
 
-export default questionSchema
+export default mongoose.models.Question || mongoose.model('Question', Question);

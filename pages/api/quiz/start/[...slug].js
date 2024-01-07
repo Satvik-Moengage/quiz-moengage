@@ -6,7 +6,7 @@ import {
     QuizTakenSchema,
     AttemptSchema,
 } from "../../../../schemas";
-import RedisClient from "../../../../utils/redis_client";
+import MongoDbClient from "../../../../utils/mongo_client";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -23,25 +23,14 @@ async function startQuiz(req, res) {
     const quizId = slug[0];
     const userId = slug[1];
 
-    const redis = new RedisClient();
-    const client = await redis.initClient();
-
-    const quizRepo = client.fetchRepository(QuizSchema);
-    const userRepo = client.fetchRepository(UserSchema);
-    const questionRepo = client.fetchRepository(QuestionSchema);
-
-    await userRepo.createIndex();
-    await questionRepo.createIndex();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const user = await userRepo.fetch(userId);
-        const quiz = await quizRepo.fetch(quizId);
+        const user = await UserSchema.findById(userId);
+        const quiz = await QuizSchema.findById(quizId);
 
-        const questions = await questionRepo
-            .search()
-            .where("quizId")
-            .equals(quizId)
-            .return.all();
+        const questions = await QuestionSchema.find({ quizId: quizId });
 
         // Confirm if user already enrolled
         if (!user.quizzesEnrolled.includes(quizId)) {
@@ -50,15 +39,9 @@ async function startQuiz(req, res) {
             });
         }
 
-        console.log("Hi")
-
-        // console.log(user.quizzesTaken)
-
         // Confirm if the quiz has started
-
         if (
-            new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")) >=
-            Date.now()
+            new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")) >= Date.now()
         ) {
             return res.status(400).json({
                 error: "Quiz has not started yet!",
@@ -66,7 +49,7 @@ async function startQuiz(req, res) {
         }
 
         /**
-         * Save the questions in redis cache database
+         * Save the questions in session
          */
 
         const quizData = {
@@ -74,12 +57,7 @@ async function startQuiz(req, res) {
             duration: quiz.duration,
         };
 
-        // save the questions on redis and userId as the key
-
-        // await redis.set(userId, JSON.stringify(quizData), "EX", 3600);
-        await client.execute(["SET", userId, JSON.stringify(quizData)]);
-        // add the cache expiry of a max of 1hr
-        await client.execute(["EXPIRE", userId, 3600]);
+        req.session.quizData = quizData;
 
         /**
          * Get the questions and return them to frontend without the correct answer
@@ -96,7 +74,7 @@ async function startQuiz(req, res) {
             error: err,
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }
 
@@ -105,96 +83,93 @@ async function markQuiz(req, res) {
 
     const quizId = slug[0];
     const userId = slug[1];
-    const redis = new RedisClient();
-    const client = await redis.initClient();
 
-    const quizRepo = client.fetchRepository(QuizSchema);
-    const userRepo = client.fetchRepository(UserSchema);
-    const respRepo = client.fetchRepository(ResponseSchema);
-    const quizTakenRepo = client.fetchRepository(QuizTakenSchema);
-    const attemptRepo = client.fetchRepository(AttemptSchema);
+    const db = new MongoDbClient();
+    await db.initClient();
 
-    const user = await userRepo.fetch(userId); // fetch user
-    const quiz = await quizRepo.fetch(quizId); // fetch the quiz
+    try {
+        const user = await UserSchema.findById(userId); // fetch user
+        const quiz = await QuizSchema.findById(quizId); // fetch the quiz
 
-    // create new attempt
-    const newAttempt = attemptRepo.createEntity({
-        quizId: quizId,
-        userId: userId,
-    });
+        // create new attempt
+        const newAttempt = new AttemptSchema({
+            quizId: quizId,
+            userId: userId,
+        });
 
-    let attemptId = await attemptRepo.save(newAttempt);
+        let attemptId = await newAttempt.save();
 
-    await respRepo.createIndex();
+        const { questions } = req.body;
 
-    const { questions } = req.body;
+        let score = 0;
 
-    let score = 0;
+        // retrieve questions from session
+        let quizData = req.session.quizData;
+        let { questions: storedQuestions } = quizData;
 
-    // retrieve questions from redis
-    let quizData = await client.execute(["GET", userId]);
+        if (storedQuestions) {
+            storedQuestions.forEach(async (item, i) => {
+                if (
+                    String(questions[i].selectedOption).toLowerCase() ===
+                    String(item.correctAnswer).toLowerCase()
+                ) {
+                    score += 1;
+                }
 
-    quizData = JSON.parse(quizData);
-    let { questions: storedQuestions } = quizData;
+                let newResp = new ResponseSchema({
+                    description: item.description,
+                    selected: questions[i].selectedOption,
+                    questionId: item._id ,
+                    quizId: quizId,
+                    correctAnswer: item.correctAnswer,
+                    options: item.options,
+                    attemptId: attemptId,
+                });
 
-    if (storedQuestions) {
-        storedQuestions.forEach(async (item, i) => {
-            if (
-                String(questions[i].selectedOption).toLowerCase() ===
-                String(item.correctAnswer).toLowerCase()
-            ) {
-                score += 1;
-            }
-
-            let newResp = respRepo.createEntity({
-                description: item.description,
-                selected: questions[i].selectedOption,
-                questionId: item.entityId,
-                quizId: quizId,
-                correctAnswer: item.correctAnswer,
-                options: item.options,
-                attemptId: attemptId,
+                await newResp.save();
             });
 
-            await respRepo.save(newResp);
-        });
+            const responses = await ResponseSchema
+                .find({ "attemptId": attemptId });
 
-        const responses = await respRepo
-            .search()
-            .where("attemptId")
-            .equals(attemptId)
-            .return.all();
+            let responsesId = responses.map((item) => item._id);
 
-        let responsesId = responses.map((item) => item.entityId);
+            const newQuizTaken = new QuizTakenSchema({
+                userId: userId,
+                score: score,
+                quizId: quizId,
+                attemptId: attemptId,
+                responses: responsesId,
+                quizTitle: quiz.title,
+                userName: user.name,
+            });
 
-        const newQuizTaken = quizTakenRepo.createEntity({
-            userId: userId,
-            score: score,
-            quizId: quizId,
-            attemptId: attemptId,
-            responses: responsesId,
-            quizTitle: quiz.title,
-            userName: user.name,
-        });
+            await newQuizTaken.save();
+            // push the quizTaken id to quiz schema
+            quiz.quizTaken.push(newQuizTaken._id);
+            user.quizTaken.push(newQuizTaken._id);
 
-        await quizTakenRepo.save(newQuizTaken);
-        // push the quizTaken id to quiz schema
-        quiz.addQuizTaken(newQuizTaken.entityId);
-        user.addQuizTaken(newQuizTaken.entityId);
+            // save changes made on quiz and user
+            await quiz.save();
+            await user.save();
 
-        // save changes made on quiz and user
-        await quizRepo.save(quiz);
-        await userRepo.save(user);
+            // Remove the quizData session
+            delete req.session.quizData;
 
-        // Remove the quizData cache
-        await client.execute(["DEL", userId]);
-
-        return res.status(200).json({
-            attemptId: attemptId,
-        });
-    } else {
+            return res.status(200).json({
+                attemptId: attemptId,
+            });
+        } else {
+            return res.status(400).json({
+                error: "An error was encountered",
+            });
+        }
+    } catch (err) {
+        console.log(err);
         return res.status(400).json({
-            error: "An error was encountered",
+            error: err,
         });
+    } finally {
+        await db.disconnectClient();
     }
 }

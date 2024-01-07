@@ -1,4 +1,4 @@
-import RedisClient from "../../../../utils/redis_client";
+import MongoDbClient from "../../../../utils/mongo_client";
 import { QuizTakenSchema, ResponseSchema } from "../../../../schemas";
 
 export default async function handler(req, res) {
@@ -9,23 +9,14 @@ export default async function handler(req, res) {
 }
 
 async function getResponses(req, res) {
-    const redis = new RedisClient();
-    const client = await redis.initClient();
+    const db = new MongoDbClient();
+    await db.initClient();
 
     const { attemptId } = req.query;
 
-    const quizTakenRepo = client.fetchRepository(QuizTakenSchema);
-    const respRepo = client.fetchRepository(ResponseSchema);
-
-    await quizTakenRepo.createIndex();
-    await respRepo.createIndex();
-
     try {
-        let quizTaken = await quizTakenRepo
-            .search()
-            .where("attemptId")
-            .equals(attemptId)
-            .return.first();
+        let quizTaken = await QuizTakenSchema
+            .findOne({ "attemptId": attemptId });
 
         quizTaken = quizTaken.toJSON();
 
@@ -36,11 +27,8 @@ async function getResponses(req, res) {
         attemptInfo.attemptId = quizTaken.attemptId;
         attemptInfo.quizTitle = quizTaken.quizTitle;
 
-        let responses = await respRepo
-            .search()
-            .where("attemptId")
-            .equals(attemptId)
-            .return.all();
+        let responses = await ResponseSchema
+            .find({ "attemptId": attemptId });
 
         responses = responses.map((item) => item.toJSON());
         attemptInfo.responses = responses;
@@ -52,6 +40,6 @@ async function getResponses(req, res) {
             error: "An error was encountered",
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

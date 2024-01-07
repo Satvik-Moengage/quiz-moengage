@@ -1,6 +1,6 @@
-import RedisClient from "../../../../utils/redis_client";
-import { QuizSchema, UserSchema } from "../../../../schemas";
+import MongoDbClient from "../../../../utils/mongo_client";
 import { getSession } from "next-auth/react";
+import { QuizSchema, UserSchema } from "../../../../schemas";
 
 export default function handler(req, res) {
     switch (req.method) {
@@ -12,27 +12,15 @@ export default function handler(req, res) {
 async function enrollUserToQuiz(req, res) {
     const { quizCode } = req.query;
     const session = await getSession({ req });
-    const redis = new RedisClient();
-    const client = await redis.initClient();
 
-    let userId = session?.user?.id;
+    const db = new MongoDbClient();
+    await db.initClient();
 
-    const quizRepo = client.fetchRepository(QuizSchema);
-    const userRepo = client.fetchRepository(UserSchema);
-
-    await quizRepo.createIndex();
-
-    // let quiz = await quizRepo.fetch(quizId);
-    let user = await userRepo.fetch(userId);
+    let userId = session?.user?._id;
 
     try {
-        // Confirm if user already enrolled
-        
-        let quiz = await quizRepo
-        .search()
-        .where("quizCode")
-        .equals(quizCode)
-        .return.first();
+        let quiz = await QuizSchema.findOne({quizCode: quizCode});
+        let user = await UserSchema.findById(userId);
 
         // validate the code
         if (!quiz){
@@ -42,24 +30,22 @@ async function enrollUserToQuiz(req, res) {
         }
 
         // Confirm if user already enrolled
-        
-        if (quiz.usersEnrolled.includes(userId)) {
+        if (quiz.usersEnrolled.includes (userId)) {
             return res.status(409).json({
                 error: `${user.name} you're already enrolled`,
             });
         }
 
-        let quizId = quiz.entityId
         // if user not enrolled, add user to enrolled list
-        quiz.addUserEnrolled(userId);
-        user.addQuizEnrolled(quizId);
+        quiz.usersEnrolled.push(userId);
+        user.quizzesEnrolled.push(quiz._id);
 
         // save the changes made
-        await quizRepo.save(quiz);
-        await userRepo.save(user);
+        await quiz.save();
+        await user.save();
 
         return res.status(200).json({
-            message: `${user.name} you have been successfully enrolled to the quiz`,
+            message: `${user .name} you have been successfully enrolled to the quiz`,
         });
     } catch (err) {
         console.log(err);
@@ -67,6 +53,6 @@ async function enrollUserToQuiz(req, res) {
             error: err
         });
     } finally {
-        await redis.disconnectClient();
+        await db.disconnectClient();
     }
 }

@@ -1,5 +1,7 @@
+
+
 import { UserSchema } from "../../../schemas";
-import { Client } from "redis-om";
+import MongoDbClient from "../../../utils/mongo_client";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -11,21 +13,13 @@ export default async function handler(req, res) {
 }
 
 async function createUser(req, res) {
-    const client = new Client();
-    // await client.open('redis://localhost:6379')
-    await client.open(process.env.REDIS_URL);
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const userRepo = client.fetchRepository(UserSchema);
         const { name, email, isAdmin, password } = req.body;
 
-        // create search index
-        await userRepo.createIndex();
-        const existingUser = await userRepo
-            .search()
-            .where("email")
-            .equals(email)
-            .return.first();
+        const existingUser = await UserSchema.findOne({ email });
 
         // Since email address has to be unique, check if it already exists
         if (existingUser) {
@@ -36,7 +30,7 @@ async function createUser(req, res) {
 
         // Otherwise proceed to create new user
 
-        const newUser = userRepo.createEntity({
+        const newUser = new UserSchema({
             name: name,
             email: email,
             isAdmin: isAdmin,
@@ -47,7 +41,7 @@ async function createUser(req, res) {
 
         newUser.setPassword(password);
 
-        await userRepo.save(newUser);
+        await newUser.save();
 
         return res.status(200).json({
             message: "We've successfully created your account",
@@ -58,20 +52,16 @@ async function createUser(req, res) {
             error: err,
         });
     } finally {
-        await client.close();
+        await db.disconnectClient();
     }
 }
 
 async function getUsers(req, res) {
-    const client = new Client();
-    await client.open(process.env.REDIS_URL);
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
-        const userRepo = client.fetchRepository(UserSchema);
-
-        await userRepo.createIndex();
-
-        const users = await userRepo.search().return.all();
+        const users = await UserSchema.find({});
 
         return res.status(200).json(users);
     } catch (err) {
@@ -80,6 +70,6 @@ async function getUsers(req, res) {
             error: `An error was encountered`,
         });
     } finally {
-        await client.close();
+        await db.disconnectClient();
     }
 }
