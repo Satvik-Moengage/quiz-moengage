@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
 async function createQuestion(req, res) {
     const { quizId } = req.query;
-    const { description, options, correctAnswer } = req.body;
+    const { description, options, correctAnswer, type, hotspot } = req.body;  // Add 'type' and 'hotspot' fields
 
     const db = new MongoDbClient();
     await db.initClient();
@@ -22,7 +22,9 @@ async function createQuestion(req, res) {
             quizId: quizId,
             description: description,
             options: options,
-            correctAnswer: correctAnswer
+            correctAnswer: correctAnswer,
+            type: type,  // Assign 'type' field from the request body
+            hotspot: hotspot  // Assign 'hotspot' field from the request body
         });
 
         await newQuestion.save(); // save the new question
@@ -35,9 +37,7 @@ async function createQuestion(req, res) {
         return res.status(400).json({
             error: "An error was encountered"
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function getQuestions(req, res) {
@@ -53,9 +53,7 @@ async function getQuestions(req, res) {
     } catch (err) {
         console.log(err);
         return res.status(400).json({
-            error: "An error was encountured"
+            error: "An error was encountered"
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

@@ -48,7 +48,7 @@ export default function Quizes () {
                     <Box>
                         {quizzes?.map((quiz) => (
                             <QuizItem
-                                key={quiz?.entityId}
+                                key={quiz?._id}
                                 quiz={quiz}
                                 user={session?.user}
                             />
@@ -67,7 +67,7 @@ const QuizItem = ({ quiz, user }) => {
     const [loading, setLoading] = useState(false);
 
     const enroll = () => {
-        enrollToQuiz(quiz.entityId, user.id).then((data) => {
+        enrollToQuiz(quiz._id, user.id).then((data) => {
             setLoading(false);
             setShowConfirmModal(false);
             toast({

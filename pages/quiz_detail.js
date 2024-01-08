@@ -7,22 +7,17 @@ import useSWR from "swr";
 import axios from "axios";
 import Layout from "../components/Layout"
 import Head from "next/head"
-
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
-
 export default function QuizDetails (){
     const router = useRouter();
     const [quizId, setQuizId] = useState("");
-
     useEffect(() => {
-        const { quizId: id } = router.query;
+        const { quizId:id } = router.query;
         if (id) {
             setQuizId(id);
         }
     }, [router]);
-
     const { data: quiz } = useSWR(() => `/api/quiz/details/${quizId}`, fetcher);
-
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>
@@ -49,7 +44,6 @@ export default function QuizDetails (){
         </Box>
     );
 };
-
 QuizDetails.getLayout = function getLayout(page){
     return (
         <Layout>

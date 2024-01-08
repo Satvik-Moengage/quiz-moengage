@@ -73,9 +73,7 @@ async function startQuiz(req, res) {
         return res.status(400).json({
             error: err,
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function markQuiz(req, res) {
@@ -169,7 +167,5 @@ async function markQuiz(req, res) {
         return res.status(400).json({
             error: err,
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

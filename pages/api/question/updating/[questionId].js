@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import {QuestionSchema} from "../../../../schemas";
+import { QuestionSchema } from "../../../../schemas";
 import MongoDbClient from "../../../../utils/mongo_client";
 
-export default async function handler (req, res) {
+export default function handler(req, res) {
     switch (req.method) {
         case "PUT":
             return updateQuestion(req, res);
@@ -13,7 +13,7 @@ export default async function handler (req, res) {
 
 async function updateQuestion(req, res) {
     const { questionId } = req.query;
-    const { description, options, correctAnswer } = req.body;
+    const { description, options, correctAnswer, type, hotspot } = req.body;  // Add 'type' and 'hotspot' fields
 
     const db = new MongoDbClient();
     await db.initClient();
@@ -24,20 +24,20 @@ async function updateQuestion(req, res) {
         question.description = description;
         question.options = options;
         question.correctAnswer = correctAnswer;
+        question.type = type;  // Update 'type' field
+        question.hotspot = hotspot;  // Update 'hotspot' field
 
         await question.save(); // save changes
 
         return res.status(200).json({
             message: "Question updated successfully",
         });
-    } catch (err) {
+    } catch(err) {
         console.log(err);
         return res.status(400).json({
-            message: "An error was encountered",
+            error: "An error was encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function removeQuestion(req, res) {
@@ -58,7 +58,5 @@ async function removeQuestion(req, res) {
         return res.status(400).json({
             message: "An error was encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

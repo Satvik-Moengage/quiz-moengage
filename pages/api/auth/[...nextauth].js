@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import mongoose from "mongoose";
+import MongoDbClient from "../../../utils/mongo_client";
 import { UserSchema } from "../../../schemas";
 
 
@@ -11,10 +11,9 @@ export default NextAuth({
     providers: [
         CredentialsProvider({
             async authorize(credentials) {
-                await mongoose.connect(process.env.MONGODB_URL, {
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
-                });
+                const db = new MongoDbClient();
+                await db.initClient();
+
                 try {
                     const user = await UserSchema.findOne({ email: credentials.email });
                     if (!user) {

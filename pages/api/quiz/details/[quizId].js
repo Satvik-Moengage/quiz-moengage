@@ -15,6 +15,8 @@ export default function handler(req, res) {
 
 async function getQuizDetails(req, res) {
     const { quizId } = req.query;
+    console.log("HI");
+    console.log(quizId)
 
     const db = new MongoDbClient();
     await db.initClient();
@@ -36,9 +38,7 @@ async function getQuizDetails(req, res) {
         return res.status(400).json({
             message: "An error was encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function updateDetails(req, res) {
@@ -78,13 +78,12 @@ async function updateDetails(req, res) {
         return res.status(400).json({
             message: "An error was encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function removeQuiz (req, res) {
     const { quizId } = req.query;
+    console.log("Hi",quizId)
     const session = await getSession({ req });
     const userId = session?.user?._id;
 
@@ -111,7 +110,5 @@ async function removeQuiz (req, res) {
         return res.status(400).json({
             message: "An error was encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

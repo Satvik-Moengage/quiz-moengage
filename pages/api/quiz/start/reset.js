@@ -29,7 +29,5 @@ async function reset(req, res) {
         return res.status(200).json({
             error: "An error has been encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

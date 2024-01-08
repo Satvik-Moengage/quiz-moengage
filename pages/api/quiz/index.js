@@ -24,9 +24,7 @@ async function getQuizzes(req, res) {
         return res.status(400).json({
             message: "An error was encountered",
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function createQuiz(req, res) {
@@ -67,7 +65,5 @@ async function createQuiz(req, res) {
         return res.status(400).json({
             error: `An error was encountered`,
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

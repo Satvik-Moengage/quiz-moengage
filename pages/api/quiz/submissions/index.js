@@ -28,7 +28,5 @@ async function getMyQuizSubmissions(req, res) {
         return res.status(400).json({
             message: 'An error was encountered'
         })
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

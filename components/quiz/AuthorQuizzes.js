@@ -26,7 +26,7 @@ const AuthorQuizzes = ({ quizzes }) => {
                 ) : (
                     <>
                         {quizzes?.map((quiz) => (
-                            <QuizItem key={quiz?.entityId} quiz={quiz} />
+                            <QuizItem key={quiz?._id} quiz={quiz} />
                         ))}
                     </>
                 )}
@@ -43,7 +43,7 @@ const QuizItem = ({ quiz }) => {
 
     const remove = () => {
         setLoading(true);
-        removeQuiz(quiz?.entityId)
+        removeQuiz(quiz?._id)
             .then((data) => {
                 if (data.message) {
                     setShowConfirmModal(false);
@@ -86,7 +86,7 @@ const QuizItem = ({ quiz }) => {
                             router.push(
                                 {
                                     pathname: "/quiz_detail",
-                                    query: { quizId: quiz.entityId },
+                                    query: { quizId: quiz._id },
                                 },
                                 "/quiz_detail"
                             )

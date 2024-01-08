@@ -52,7 +52,5 @@ async function enrollUserToQuiz(req, res) {
         return res.status(400).json({
             error: err
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

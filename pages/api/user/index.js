@@ -51,9 +51,7 @@ async function createUser(req, res) {
         return res.status(400).json({
             error: err,
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
 
 async function getUsers(req, res) {
@@ -69,7 +67,5 @@ async function getUsers(req, res) {
         return res.status(400).json({
             error: `An error was encountered`,
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

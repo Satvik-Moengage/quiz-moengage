@@ -28,7 +28,5 @@ async function getUsersLeaderboard(req, res) {
         return res.status(400).json({
             error: `An error was encountered`,
         });
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }

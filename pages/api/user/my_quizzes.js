@@ -17,7 +17,7 @@ async function myAuthoredQuizzes(req, res){
 
     const session = await getSession({req})
     console.log(session)
-    const userId = session?.user?._id;
+    const userId = session?.user?.id;
     console.log(userId)
     try {
         const quizzes = await QuizSchema.find({authorId: userId})
@@ -29,7 +29,5 @@ async function myAuthoredQuizzes(req, res){
         return res.status(400).json({
             message:`An error was encountured`
         })
-    } finally {
-        await db.disconnectClient();
-    }
+    }  
 }
