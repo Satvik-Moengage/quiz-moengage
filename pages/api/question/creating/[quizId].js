@@ -12,33 +12,64 @@ export default async function handler(req, res) {
 
 async function createQuestion(req, res) {
     const { quizId } = req.query;
-    const { description, options, correctAnswer, type, hotspot } = req.body;  // Add 'type' and 'hotspot' fields
-
+    
+    const { description, options, correctAnswer, type, imageUrl } = req.body;
+  
     const db = new MongoDbClient();
     await db.initClient();
-
+    
     try {
-        const newQuestion = new QuestionSchema({
-            quizId: quizId,
-            description: description,
-            options: options,
+      let newQuestion;
+
+      switch (type) {
+        case 'MCQ':
+          newQuestion = new QuestionSchema({
+            quizId,
+            description,
+            options,
+            correctAnswer,
+            type,
+          });
+          break;
+        
+        case 'True/False':
+          newQuestion = new QuestionSchema({
+            quizId,
+            description,
+            options: ['True', 'False'],
+            correctAnswer,
+            type,
+          });
+          break;
+        
+        case 'Hotspot':
+          newQuestion = new QuestionSchema({
+            quizId,
+            description,
             correctAnswer: correctAnswer,
-            type: type,  // Assign 'type' field from the request body
-            hotspot: hotspot  // Assign 'hotspot' field from the request body
-        });
-
-        await newQuestion.save(); // save the new question
-
-        return res.status(200).json({
-            message: "Question added successfully"
-        });
+            type,
+            imageUrl,
+          });
+          break;
+        
+        default:
+          return res.status(400).json({
+            error: 'Invalid question type',
+          });
+      }
+      
+      await newQuestion.save();
+  
+      return res.status(200).json({
+        message: 'Question added successfully',
+      });
     } catch (err) {
-        console.log(err);
-        return res.status(400).json({
-            error: "An error was encountered"
-        });
-    }  
-}
+      console.log(err);
+      return res.status(400).json({
+        error: 'An error was encountered',
+      });
+    }
+  }
 
 async function getQuestions(req, res) {
     const { quizId } = req.query;

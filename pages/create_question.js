@@ -14,7 +14,7 @@ export default function CreateQuestion() {
     const toast = useToast();
     const { quizId } = router.query;
     const [image, setImage] = useState(null);
-    const [imageUrl, setImageUrl] = useState(null);
+    const [imageUrl, setImageUrl] = useState("");
     const [description, setDescription] = useState("");
     const [option1, setOption1] = useState("");
     const [option2, setOption2] = useState("");

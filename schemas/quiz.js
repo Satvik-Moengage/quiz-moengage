@@ -8,11 +8,11 @@ const Quiz = new Schema({
     duration: { type: Number },
     description: { type: String },
     authorId: { type: String },
-    quizTaken: { type: [String] }, // array of quizTake ids who took the quiz, quizTaken has quizId, UserId, score, responses
-    usersEnrolled: { type: [String] }, // ensure to initiate as empty array []
+    quizTaken: { type: [String] }, 
+    usersEnrolled: { type: [String] },
     createdAt: { type: Date },
     scheduledFor: { type: Date },
-    quizType: { type: String } // quiz type can be private or public, for private they use a quizCode to join
+    quizType: { type: String } 
 });
 
 Quiz.methods.addQuizTaken = function(quizId) {

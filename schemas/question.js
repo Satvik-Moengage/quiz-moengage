@@ -1,14 +1,15 @@
-import { Schema } from "mongoose";
 import mongoose from "mongoose";
 
+const { Schema } = mongoose;
 
-const Question = new Schema({
-    quizId: { type: String },
-    description: { type: String },
-    type: { type: String, enum: ['MCQ', 'True/False', 'Hotspot'] },
-    options: { type: [String] },
-    correctAnswer: { type: String },
-    hotspot: {type: [Number] }
+const QuestionSchema = new Schema({
+    quizId: { type: String, required: true },
+    description: { type: String, required: true },
+    type: { type: String, enum: ['MCQ', 'True/False', 'Hotspot'], required: true },
+    options: { type: [String], default: [] },
+    correctAnswer: { type: Schema.Types.Mixed },
+    hotspot: { type: [Number], default: [] },
+    imageUrl: { type: String, default: "" },
 });
 
-export default mongoose.models.Question || mongoose.model('Question', Question);
+export default mongoose.models.Question || mongoose.model('Question', QuestionSchema);

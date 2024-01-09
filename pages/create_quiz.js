@@ -139,7 +139,7 @@ export default function CreateQuiz() {
                                     aria-label="duration"
                                     defaultValue={duration}
                                     min={0}
-                                    max={60}
+                                    max={120}
                                     onChange={(val) => setDuration(val)}
                                 >
                                     <SliderMark

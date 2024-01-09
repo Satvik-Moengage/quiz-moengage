@@ -47,7 +47,6 @@ async function removeQuestion(req, res) {
     await db.initClient();
 
     try {
-        // Now remove the question using questionID
         await QuestionSchema.findByIdAndDelete(questionId);
 
         return res.status(200).json({

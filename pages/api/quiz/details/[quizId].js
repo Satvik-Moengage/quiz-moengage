@@ -1,6 +1,7 @@
 import MongoDbClient from "../../../../utils/mongo_client";
 import { getSession } from "next-auth/react";
 import { QuizSchema } from "../../../../schemas";
+import quiz from "../../../../schemas/quiz";
 
 export default function handler(req, res) {
     switch (req.method) {
@@ -15,8 +16,8 @@ export default function handler(req, res) {
 
 async function getQuizDetails(req, res) {
     const { quizId } = req.query;
-    console.log("HI");
-    console.log(quizId)
+
+    console.log(quizId);
 
     const db = new MongoDbClient();
     await db.initClient();
@@ -43,6 +44,7 @@ async function getQuizDetails(req, res) {
 
 async function updateDetails(req, res) {
     const { quizId } = req.query;
+    console.log(quizId)
 
     const db = new MongoDbClient();
     await db.initClient();
@@ -83,7 +85,6 @@ async function updateDetails(req, res) {
 
 async function removeQuiz (req, res) {
     const { quizId } = req.query;
-    console.log("Hi",quizId)
     const session = await getSession({ req });
     const userId = session?.user?._id;
 
@@ -92,7 +93,6 @@ async function removeQuiz (req, res) {
 
     try {
         const quiz = await QuizSchema.findById(quizId);
-        // Confirm the user removing is the author
         if (quiz.authorId !== userId) {
             return res.status(403).json({
                 message: "You are not authorized to remove the quiz",

@@ -25,7 +25,7 @@ export default function Users() {
             <Heading py={5}>Users</Heading>
             <Card>
                 {users?.map((user) => (
-                    <UserItem key={user?.entityId} user={user} />
+                    <UserItem key={user?._id} user={user} />
                 ))}
             </Card>
         </Box>
@@ -78,7 +78,7 @@ const UserItem = ({ user }) => {
                                 {
                                     pathname: "/userprofile",
                                     query: {
-                                        userId: user?.entityId,
+                                        userId: user?._id,
                                     },
                                 },
                                 "/userprofile"
