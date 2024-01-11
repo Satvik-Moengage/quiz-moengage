@@ -19,7 +19,6 @@ export default async function handler(req, res) {
 
 async function startQuiz(req, res) {
     const { slug } = req.query;
-
     const quizId = slug[0];
     const userId = slug[1];
 
@@ -56,8 +55,7 @@ async function startQuiz(req, res) {
             questions: questions,
             duration: quiz.duration,
         };
-
-        req.session.quizData = quizData;
+        
 
         /**
          * Get the questions and return them to frontend without the correct answer
@@ -66,6 +64,7 @@ async function startQuiz(req, res) {
 
         return res.status(200).json({
             message: `Quiz started for ${user.name}`,
+            quizData: quizData
         });
     } catch (err) {
         console.log(err);
@@ -86,8 +85,10 @@ async function markQuiz(req, res) {
     await db.initClient();
 
     try {
-        const user = await UserSchema.findById(userId); // fetch user
-        const quiz = await QuizSchema.findById(quizId); // fetch the quiz
+        let user = await UserSchema.findById(userId); // fetch user
+        let quiz = await QuizSchema.findById(quizId);
+
+        const questionsU = await QuestionSchema.find({ quizId: quizId });// fetch the quiz
 
         // create new attempt
         const newAttempt = new AttemptSchema({
@@ -98,15 +99,17 @@ async function markQuiz(req, res) {
         let attemptId = await newAttempt.save();
 
         const { questions } = req.body;
-
         let score = 0;
 
         // retrieve questions from session
-        let quizData = req.session.quizData;
+        const quizData = {
+            questions: questionsU,
+            duration: quiz.duration,
+        };
         let { questions: storedQuestions } = quizData;
 
-        if (storedQuestions) {
-            storedQuestions.forEach(async (item, i) => {
+        if (quizData.questions) {
+            quizData.questions.forEach(async (item, i) => {
                 if (
                     String(questions[i].selectedOption).toLowerCase() ===
                     String(item.correctAnswer).toLowerCase()
@@ -121,22 +124,21 @@ async function markQuiz(req, res) {
                     quizId: quizId,
                     correctAnswer: item.correctAnswer,
                     options: item.options,
-                    attemptId: attemptId,
+                    attemptId: attemptId._id,
                 });
 
                 await newResp.save();
             });
 
             const responses = await ResponseSchema
-                .find({ "attemptId": attemptId });
+                .find({ "attemptId": attemptId._id });
 
             let responsesId = responses.map((item) => item._id);
-
             const newQuizTaken = new QuizTakenSchema({
                 userId: userId,
                 score: score,
                 quizId: quizId,
-                attemptId: attemptId,
+                attemptId: attemptId._id,
                 responses: responsesId,
                 quizTitle: quiz.title,
                 userName: user.name,
@@ -144,18 +146,19 @@ async function markQuiz(req, res) {
 
             await newQuizTaken.save();
             // push the quizTaken id to quiz schema
-            quiz.quizTaken.push(newQuizTaken._id);
-            user.quizTaken.push(newQuizTaken._id);
+            
 
-            // save changes made on quiz and user
-            await quiz.save();
-            await user.save();
+            await UserSchema.findByIdAndUpdate(userId, {
+                $push: { quizTaken: newQuizTaken._id },
+              });
+              
+              await QuizSchema.findByIdAndUpdate(quizId, {
+                $push: { quizTaken: newQuizTaken._id },
+              });
 
             // Remove the quizData session
-            delete req.session.quizData;
-
             return res.status(200).json({
-                attemptId: attemptId,
+                attemptId: attemptId._id,
             });
         } else {
             return res.status(400).json({

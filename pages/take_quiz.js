@@ -42,8 +42,8 @@ export default function Quiz (){
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
 
-    const { data } = useSWR("/api/quiz/student", fetcher);
-
+    const { data } = useSWR(`/api/quiz/student?quizId=${quizId}`, fetcher);
+    
     /**
      * Handle next btn
      */
@@ -103,15 +103,16 @@ export default function Quiz (){
         let submitData = {
             questions: allAns,
         };
-
         submitQuiz(
             { quizId: quizId, userId: session?.user?.id },
             submitData
         ).then((data) =>
-            router.replace(
+            {
+                router.replace(
                 { pathname: "/results", query: { attemptId: data.attemptId } },
                 "/results"
             )
+        }
         );
     };
 

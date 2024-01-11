@@ -15,7 +15,7 @@ async function getEnrolledQuizzes(req, res) {
     await db.initClient();
 
     try {
-        const quizzes = await QuizSchema.find({ 'usersEnrolled': session.user._id }); 
+        const quizzes = await QuizSchema.find({ 'usersEnrolled': session.user.id }); 
         return res.status(200).json(quizzes)
     } catch (err) {
         return res.status(400).json({

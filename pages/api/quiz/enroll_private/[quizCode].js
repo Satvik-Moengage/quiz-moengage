@@ -16,7 +16,7 @@ async function enrollUserToQuiz(req, res) {
     const db = new MongoDbClient();
     await db.initClient();
 
-    let userId = session?.user?._id;
+    let userId = session?.user?.id;
 
     try {
         let quiz = await QuizSchema.findOne({quizCode: quizCode});

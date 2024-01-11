@@ -33,12 +33,10 @@ export default function Results() {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { attemptId } = router.query;
-
     const { data: attemptInfo } = useSWR(
         () => `/api/quiz/attempt/${attemptId}`,
         fetcher
     );
-
     useEffect(() => {
         if (attemptInfo) {
             setLoading(false);

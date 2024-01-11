@@ -42,7 +42,7 @@ const ConfirmDialog = ({
                         {showNoBtn && (
                             <Button
                                 ref={cancelRef}
-                                onClick={() => onClose(true)}
+                                onClick={() => onClose(false)}
                             >
                                 No
                             </Button>

@@ -21,7 +21,6 @@ import Countdown from "../Countdown";
 
 const StudentQuizzes = ({ quizzes }) => {
     const { data: session } = useSession();
-
     return (
         <Box px={8}>
             <Heading py={5}>My Quizzes</Heading>
@@ -32,7 +31,7 @@ const StudentQuizzes = ({ quizzes }) => {
                     <>
                         {quizzes?.map((quiz) => (
                             <QuizItem
-                                key={quiz?.entityId}
+                                key={quiz?._id}
                                 quiz={quiz}
                                 user={session?.user}
                             />
@@ -49,9 +48,9 @@ const QuizItem = ({ quiz, user }) => {
     const toast = useToast();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const [quizData, setQuizData ] = useState();
     const start = () => {
-        startQuiz(quiz.entityId, user.id)
+        startQuiz(quiz._id, user.id)
             .then((data) => {
                 if (data?.error) {
                     toast({
@@ -62,6 +61,7 @@ const QuizItem = ({ quiz, user }) => {
                         isClosable: true,
                     });
                 } else {
+                    setQuizData(data.quizData)
                     setShowConfirmModal(false);
                     toast({
                         title: "Success",
@@ -73,7 +73,7 @@ const QuizItem = ({ quiz, user }) => {
                     router.push(
                         {
                             pathname: "/take_quiz",
-                            query: { quizId: quiz.entityId },
+                            query: { quizId: quiz._id },
                         },
                         "/take_quiz"
                     );
@@ -84,7 +84,6 @@ const QuizItem = ({ quiz, user }) => {
                 setShowConfirmModal(false);
             });
     };
-
     return (
         <Box mb={6}>
             <Flex alignItems={"center"} justifyContent={"space-between"}>

@@ -16,12 +16,9 @@ async function myAuthoredQuizzes(req, res){
     await db.initClient();
 
     const session = await getSession({req})
-    console.log(session)
     const userId = session?.user?.id;
-    console.log(userId)
     try {
         const quizzes = await QuizSchema.find({authorId: userId})
-        console.log(quizzes)
         return res.status(200).json(quizzes)
 
     } catch (err) {

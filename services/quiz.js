@@ -111,12 +111,12 @@ export const submitQuiz = async (params, quizData) => {
     try {
         const config = {
             headers: {
-                Accept:"application/json",
                 "Content-Type":"application/json"
             }
         }
-
+        console.log(quizData)
         let resp = await axios.post(`${BASE_URL}/quiz/start/${params.quizId}/${params.userId}`, quizData, config)
+        console.log(resp)
 
         return resp.data
 

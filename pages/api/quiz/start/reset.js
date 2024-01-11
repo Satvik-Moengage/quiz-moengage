@@ -1,3 +1,4 @@
+import { UserSchema } from "../../../../schemas";
 import MongoDbClient from "../../../../utils/mongo_client";
 import { getSession } from "next-auth/react";
 
@@ -17,7 +18,7 @@ async function reset(req, res) {
     try {
         // Here, we are assuming there is a field in the User schema called 'quizData' where the data is stored.
         // Replace 'User' with the actual model used for users.
-        const user = await User.findById(session.user._id);
+        const user = await UserSchema.findById(session.user._id);
         user.quizData = null;
         await user.save();
 

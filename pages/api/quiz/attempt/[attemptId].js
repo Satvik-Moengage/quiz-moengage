@@ -11,13 +11,13 @@ export default async function handler(req, res) {
 async function getResponses(req, res) {
     const db = new MongoDbClient();
     await db.initClient();
-
+    
     const { attemptId } = req.query;
-
+    
     try {
         let quizTaken = await QuizTakenSchema
             .findOne({ "attemptId": attemptId });
-
+        console.log(attemptId,"attemptid in api")
         quizTaken = quizTaken.toJSON();
 
         let attemptInfo = new Object();
