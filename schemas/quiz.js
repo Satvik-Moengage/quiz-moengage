@@ -8,11 +8,15 @@ const Quiz = new Schema({
     duration: { type: Number },
     description: { type: String },
     authorId: { type: String },
-    quizTaken: { type: [String] }, 
     usersEnrolled: { type: [String] },
     createdAt: { type: Date },
     scheduledFor: { type: Date },
-    quizType: { type: String } 
+    questions:[
+        { 
+            type: Schema.Types.ObjectId,
+            ref:"Question"
+    }
+    ]
 });
 
 Quiz.methods.addQuizTaken = function(quizId) {

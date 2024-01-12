@@ -89,6 +89,7 @@ async function markQuiz(req, res) {
 
         let attemptId = await newAttempt.save();
 
+        //user's answers
         const { questions } = req.body;
         let score = 0;
 
@@ -97,7 +98,7 @@ async function markQuiz(req, res) {
             questions: questionsU,
             duration: quiz.duration,
         };
-        let { questions: storedQuestions } = quizData;
+        //let { questions: storedQuestions } = quizData;
 
         if (quizData.questions) {
             quizData.questions.forEach(async (item, i) => {
