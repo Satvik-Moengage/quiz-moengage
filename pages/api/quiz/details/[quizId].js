@@ -28,11 +28,11 @@ async function getQuizDetails(req, res) {
         return res.status(200).json({
             id: quiz._id,
             title: quiz.title,
-            description: quiz.description,
-            quizCode: quiz.quizCode,
             duration: quiz.duration,
+            description: quiz.description,
             authorId: quiz.authorId,
             scheduledFor: quiz?.scheduledFor,
+            endTime: quiz?.endTime
         });
     } catch (err) {
         console.log(err);
@@ -52,7 +52,7 @@ async function updateDetails(req, res) {
     const session = await getSession({ req });
     const userId = session?.user?._id;
 
-    const { title, description, duration } = req.body;
+    const { title, description, duration, scheduledFor, endTime } = req.body;
 
     try {
         const quiz = await QuizSchema.findById(quizId);
@@ -68,6 +68,8 @@ async function updateDetails(req, res) {
         quiz.description = description;
         quiz.title = title;
         quiz.duration = duration;
+        quiz.scheduledFor = scheduledFor;
+        quiz.endTime = endTime;
 
         // Save changes
         await quiz.save();

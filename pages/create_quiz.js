@@ -18,7 +18,6 @@ import {
     useToast,
     Alert,
     AlertIcon,
-    Select,
 } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdGraphicEq } from "react-icons/md";
@@ -35,7 +34,8 @@ export default function CreateQuiz() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [scheduledFor, setScheduledFor] = useState(new Date());
-    const [quizType, setQuizType] = useState("private");
+    const [endTime, setEndTime] = useState(new Date());
+    
     const [loading, setLoading] = useState(false);
 
     const { data: session } = useSession();
@@ -47,9 +47,11 @@ export default function CreateQuiz() {
             duration: duration,
             description: description,
             authorId: session.user.id,
-            quizType: quizType,
             scheduledFor: scheduledFor,
+            endTime: endTime,
         };
+
+        console.log(quiz);
 
         const resetForm = () => {
             setTitle("");
@@ -171,20 +173,18 @@ export default function CreateQuiz() {
                                     }
                                 />
                             </FormControl>
-                            <FormControl id="quizType">
-                                <FormLabel>Quiz Type</FormLabel>
-                                <Select
-                                    placeholder="Select quiz type"
+                            <FormControl id="endTime">
+                                <FormLabel>Quiz End Date and Time</FormLabel>
+                                <Input
+                                    variant={"flushed"}
+                                    color={"gray.500"}
+                                    placeholder="Select Quiz End Date and Time"
+                                    type={"datetime-local"}
+                                    value={endTime}
                                     onChange={(e) =>
-                                        setQuizType(e.target.value)
+                                        setEndTime(e.target.value)
                                     }
-                                    value={quizType}
-                                >
-                                    <option value={"private"}>
-                                        {"Private"}
-                                    </option>
-                                    <option value={"public"}>{"Public"}</option>
-                                </Select>
+                                />
                             </FormControl>
                             <Stack spacing={10} my={8}>
                                 <Button

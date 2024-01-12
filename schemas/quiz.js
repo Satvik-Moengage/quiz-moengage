@@ -4,13 +4,13 @@ import mongoose from "mongoose";
 
 const Quiz = new Schema({
     title: { type: String },
-    quizCode: { type: String },
     duration: { type: Number },
     description: { type: String },
     authorId: { type: String },
     usersEnrolled: { type: [String] },
     createdAt: { type: Date },
     scheduledFor: { type: Date },
+    endTime: {type: Date},
     questions:[
         { 
             type: Schema.Types.ObjectId,
