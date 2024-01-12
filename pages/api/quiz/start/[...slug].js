@@ -30,6 +30,7 @@ async function startQuiz(req, res) {
         const quiz = await QuizSchema.findById(quizId);
 
         const questions = await QuestionSchema.find({ quizId: quizId });
+        console.log(questions,"questions");
 
         // Confirm if user already enrolled
         if (!user.quizzesEnrolled.includes(quizId)) {
@@ -38,7 +39,6 @@ async function startQuiz(req, res) {
             });
         }
 
-        // Confirm if the quiz has started
         if (
             new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")) >= Date.now()
         ) {
@@ -47,20 +47,11 @@ async function startQuiz(req, res) {
             });
         }
 
-        /**
-         * Save the questions in session
-         */
-
         const quizData = {
             questions: questions,
             duration: quiz.duration,
         };
         
-
-        /**
-         * Get the questions and return them to frontend without the correct answer
-         *
-         */
 
         return res.status(200).json({
             message: `Quiz started for ${user.name}`,

@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
 async function getMyQuizSubmissions(req, res) {
     const session = await getSession({ req });
-    const userId = session?.user?._id;
+    const userId = session?.user?.id;
 
     const db = new MongoDbClient();
     await db.initClient();

@@ -13,6 +13,7 @@ import {
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
+import { Icon } from '@chakra-ui/react';
 import Countdown from "../components/Countdown";
 import Layout from "../components/Layout";
 import ConfirmDialog from "../components/common/ConfirmDialog";
@@ -23,10 +24,12 @@ import axios from "axios";
 import useSWR from "swr";
 import { submitQuiz, resetQuiz } from "../services/quiz";
 import Head from "next/head"
+import { Image } from "@chakra-ui/image";
+
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-export default function Quiz (){
+export default function Quiz() {
     const router = useRouter();
     const toast = useToast();
     const { quizId } = router.query;
@@ -41,9 +44,11 @@ export default function Quiz (){
     const [totalDuration, setTotalDuration] = useState(0);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
+    const [marker, setMarker] = useState({ top: null, left: null});
+    const [dragging, setDragging] = useState(false);
 
     const { data } = useSWR(`/api/quiz/student?quizId=${quizId}`, fetcher);
-    
+
     /**
      * Handle next btn
      */
@@ -106,9 +111,8 @@ export default function Quiz (){
         submitQuiz(
             { quizId: quizId, userId: session?.user?.id },
             submitData
-        ).then((data) =>
-            {
-                router.replace(
+        ).then((data) => {
+            router.replace(
                 { pathname: "/results", query: { attemptId: data.attemptId } },
                 "/results"
             )
@@ -144,13 +148,33 @@ export default function Quiz (){
         }
 
         questions?.map((ques) => {
-            let questObj = {
-                text: ques?.description,
-                options: ques?.options,
-            };
+            let questObj
+            if (ques.type === "MCQ") {
+                questObj = {
+                    text: ques?.description,
+                    options: ques?.options,
+                    type: ques?.type
+                };
+            }
+            else if (ques.type === "True/False") {
+                questObj = {
+                    text: ques?.description,
+                    options: ques?.options,
+                    type: ques?.type
+                };
+            }
+            else if (ques.type === "Hotspot") {
+                console.log(ques)
+                questObj = {
+                    text: ques?.description,
+                    options: ques?.options,
+                    imageUrl: ques?.imageUrl,
+                    type: ques?.type
+                };
+            }
 
             questionsData.push(questObj);
-
+            console.log(questionsData)
             let ansObj = {
                 selectedOption: null,
             };
@@ -180,6 +204,26 @@ export default function Quiz (){
         setShowResetModal(false);
         router.replace(`/quizzes`);
     };
+
+    const startDraw = (event) => {
+        const rect = event.target.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        setMarker({ top: y, left: x });
+        setDragging(false);
+    }
+    const draw = () => {
+
+    }
+    const endDraw = () => {
+        setDragging(false);
+        getBoxCoordinates();
+    }
+
+    const getBoxCoordinates = () => {
+        console.log(marker);
+        return marker
+    }
 
     return (
         <Box fontFamily={"Poppins"}>
@@ -220,6 +264,40 @@ export default function Quiz (){
                             <Text size={"md"} mb={3}>
                                 {allQuestions[currentQuestion]?.text}
                             </Text>
+                            {allQuestions[currentQuestion]?.type === "Hotspot" && (
+                            <>
+                                <Box position="relative"> 
+                                <Image
+                                    boxSize="200px"
+                                    src={allQuestions[currentQuestion]?.imageUrl}
+                                    onMouseDown={startDraw}
+                                    onMouseUp={endDraw}
+                                    onDragStart={(event) => event.preventDefault()}
+                                    alt="Hotspot"
+                                    style={{display: 'block', width: '100%', height: 'auto'}}
+                                />
+                                {marker &&
+                                    <Icon
+                                        boxSize={5} 
+                                        viewBox="0 0 24 24" 
+                                        stroke="currentColor"
+                                        fill="none" 
+                                        style={{
+                                            position: 'absolute',
+                                            top: marker.top + 'px', 
+                                            left: marker.left + 'px'
+                                        }}
+                                    >
+
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </Icon>
+                                }
+                                </Box>
+                            </>)}
+                            <Text size={"md"} mb={3}>
+                                {allQuestions[currentQuestion]?.correctAnswer}
+                            </Text>
+
                             <RadioGroup
                                 onChange={handleChange}
                                 value={currentAns}
@@ -275,7 +353,7 @@ const QuizBtn = ({ text, onClick }) => (
     </Button>
 );
 
-Quiz.getLayout = function getLayout(page){
+Quiz.getLayout = function getLayout(page) {
     return (
         <Layout>
             {page}

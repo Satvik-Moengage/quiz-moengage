@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Flex, Box, FormControl, FormLabel, Input, Stack, Button, Heading, Textarea, useColorModeValue, SimpleGrid, GridItem, Select, useToast } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { useRouter } from "next/router";
@@ -6,31 +6,28 @@ import { createQuestion } from "../services/question";
 import Layout from "../components/Layout"
 import Head from 'next/head'
 import { Image } from "@chakra-ui/image";
-import Draggable from 'react-draggable';
-
 
 export default function CreateQuestion() {
     const router = useRouter();
     const toast = useToast();
     const { quizId } = router.query;
+    const image_url = null
     const [image, setImage] = useState(null);
-    const [imageUrl, setImageUrl] = useState("");
     const [description, setDescription] = useState("");
     const [option1, setOption1] = useState("");
     const [option2, setOption2] = useState("");
     const [option3, setOption3] = useState("");
     const [option4, setOption4] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState("");
-    const [correctHotspotX, setCorrectHotspotX] = useState("");
-    const [correctHotspotY, setCorrectHotspotY] = useState("");
     const [loading, setLoading] = useState(false);
     const [questionType, setQuestionType] = useState("mcq");
     const [marker, setMarker] = useState({ top: null, left: null, width: null, height: null });
     const [dragging, setDragging] = useState(false);
-
+    const [imageUrl, setImageUrl] = useState(null);
     const handleFileChange = (event) => {
         setImage(event.target.files[0]);
     };
+
 
     const startDraw = (event) => {
         const rect = event.target.getBoundingClientRect();
@@ -56,8 +53,7 @@ export default function CreateQuestion() {
     }
 
     const getBoxCoordinates = () => {
-        const { top, left, width, height } = marker;
-        console.log(`Top: ${top}, Left: ${left}, Width: ${width}, Height: ${height}`);
+        return marker
     }
 
     const resetForm = () => {
@@ -67,25 +63,27 @@ export default function CreateQuestion() {
         setOption3("");
         setOption4("");
         setCorrectAnswer("");
-        setCorrectHotspotX("");
-        setCorrectHotspotY("");
         setQuestionType("");
         setLoading(false);
     };
 
-    const uploadImage = async (id) => {
+    const uploadImage = async () => {
+        try{
         const formData = new FormData();
         formData.append("file", image);
         formData.append("upload_preset", "wc2ewopf");
         const response = await fetch("https://api.cloudinary.com/v1_1/dnb0henp1/image/upload", {
             method: "POST",
             body: formData
-        });
-        const data = await response.json();
-        console.log(data.url)
-        setImageUrl(data.url);
-    };
-
+        })
+        const data=await response.json()
+        image_url = data.url
+        }
+        
+        catch{
+            console.log("Error");
+        }
+    }
 
     const clickSubmit = async () => {
         setLoading(true);
@@ -94,19 +92,25 @@ export default function CreateQuestion() {
         if (questionType === "mcq") {
             options = [option1, option2, option3, option4];
             questionData = { description, options, correctAnswer, type: 'MCQ' };
-        } else if (questionType === "tf") {
+        }
+
+        else if (questionType === "tf") {
             options = ['True', 'False'];
             questionData = { description, options, correctAnswer: option1, type: 'True/False' };
-        } else if (questionType === "hotspot") {
+        }
+
+        else if (questionType === "hotspot") {
+            await uploadImage()
             if (image) {
-                await uploadImage();
-                if (imageUrl == null) {
+                if (image_url == null) {
                     toast({ title: "Error", description: "Image upload failed", status: "error", duration: 9000, isClosable: true });
                     return;
                 }
             }
-            questionData = { description, correctAnswer: [correctHotspotX, correctHotspotY], type: 'Hotspot' };
+            const ans = getBoxCoordinates();
+            questionData = { description, correctAnswer: ans, type: 'Hotspot', imageUrl: image_url };
         }
+
         createQuestion(quizId, questionData).then((data) => {
             if (data?.message) {
                 resetForm();
@@ -186,7 +190,7 @@ export default function CreateQuestion() {
                                         <Input type="file" onChange={handleFileChange} />
                                         <Box position={"relative"} mt={4}>
                                             <p mb={2} fontSize="sm" color="gray.500">Uploaded Image:</p>
-                                            
+
                                             {image ? (
                                                 <>
                                                     <Image
