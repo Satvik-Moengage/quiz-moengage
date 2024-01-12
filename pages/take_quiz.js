@@ -211,6 +211,7 @@ export default function Quiz() {
         const y = event.clientY - rect.top;
         setMarker({ top: y, left: x });
         setDragging(false);
+        getBoxCoordinates();
     }
     const draw = () => {
 

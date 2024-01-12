@@ -11,8 +11,8 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import Card from "../Card";
-import { CgTrash } from "react-icons/cg";
 import { FiEdit3 } from "react-icons/fi";
+import {FaPlay} from 'react-icons/fa'
 import { useRouter } from "next/router";
 import { startQuiz } from "../../services/quiz";
 import ConfirmDialog from "../common/ConfirmDialog";
@@ -123,23 +123,10 @@ const QuizItem = ({ quiz, user }) => {
                     >
                         <IconButton
                             size={"md"}
-                            icon={<FiEdit3 />}
+                            icon={<FaPlay/>}
                             isRound
                             bg={"gray.300"}
                             onClick={() => setShowConfirmModal(true)}
-                        />
-                    </Tooltip>
-                    <Tooltip
-                        label={"Remove Quiz from List"}
-                        hasArrow
-                        placement={"top"}
-                        bg={"teal"}
-                    >
-                        <IconButton
-                            size={"md"}
-                            icon={<CgTrash />}
-                            isRound
-                            bg={"gray.300"}
                         />
                     </Tooltip>
                 </HStack>

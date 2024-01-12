@@ -8,7 +8,6 @@ const QuestionSchema = new Schema({
     type: { type: String, enum: ['MCQ', 'True/False', 'Hotspot'], required: true },
     options: { type: [String], default: [] },
     correctAnswer: { type: Schema.Types.Mixed },
-    hotspot: { type: [Number], default: [] },
     imageUrl: { type: String, default: "" },
 });
 

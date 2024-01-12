@@ -13,21 +13,20 @@ export default function handler(req, res) {
 
 async function updateQuestion(req, res) {
     const { questionId } = req.query;
-    const { description, options, correctAnswer, type, hotspot } = req.body;  // Add 'type' and 'hotspot' fields
+    const { description, options, correctAnswer, type } = req.body; 
 
     const db = new MongoDbClient();
     await db.initClient();
 
     try {
-        const question = await QuestionSchema.findById(questionId); // retrieve the question
+        const question = await QuestionSchema.findById(questionId); 
 
         question.description = description;
         question.options = options;
         question.correctAnswer = correctAnswer;
-        question.type = type;  // Update 'type' field
-        question.hotspot = hotspot;  // Update 'hotspot' field
+        question.type = type;   
 
-        await question.save(); // save changes
+        await question.save(); 
 
         return res.status(200).json({
             message: "Question updated successfully",

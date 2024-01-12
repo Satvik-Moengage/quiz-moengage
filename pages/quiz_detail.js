@@ -6,13 +6,16 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import axios from "axios";
 import Layout from "../components/Layout"
+import EnrollUsers from '../components/quiz/EnrollUsers'
 import Head from "next/head"
+import { VStack } from "@chakra-ui/react";
+
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
-export default function QuizDetails (){
+export default function QuizDetails() {
     const router = useRouter();
     const [quizId, setQuizId] = useState("");
     useEffect(() => {
-        const { quizId:id } = router.query;
+        const { quizId: id } = router.query;
         if (id) {
             setQuizId(id);
         }
@@ -29,22 +32,22 @@ export default function QuizDetails (){
                     w={{ base: "full", xl: 11 / 12 }}
                     columns={{ base: 1, lg: 11 }}
                     gap={{ base: 0, lg: 16 }}
-                    // mx="auto"
                 >
                     <GridItem colSpan={{ base: "auto", md: 4 }}>
-                        <Info quiz={quiz} />
+                        <VStack spacing={10}>
+                            <Info quiz={quiz} />
+                            <EnrollUsers quiz={quiz} />
+                        </VStack>
                     </GridItem>
                     <GridItem colSpan={{ base: "auto", lg: 7 }}>
-                        <Questions
-                            quiz={quiz}
-                        />
+                        <Questions quiz={quiz} />
                     </GridItem>
                 </SimpleGrid>
             </Box>
         </Box>
     );
 };
-QuizDetails.getLayout = function getLayout(page){
+QuizDetails.getLayout = function getLayout(page) {
     return (
         <Layout>
             {page}

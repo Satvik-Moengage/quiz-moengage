@@ -10,7 +10,6 @@ const Response = new Schema({
     options: { type: [String] },
     attemptId: { type: String },
     type: { type: String, enum: ['MCQ', 'True/False', 'Hotspot'] },  
-    hotspot: { type: [Number] }
 });
 
 export default mongoose.models.Response || mongoose.model('Response', Response);

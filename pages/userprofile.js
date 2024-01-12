@@ -20,7 +20,7 @@ export default function UserProfile () {
     const { userId } = router.query;
 
     const { data } = useSWR(`/api/user/details/${userId}`, fetcher);
-
+    console.log(data);
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
         <Head>
