@@ -1,5 +1,5 @@
 import MongoDbClient from "../../../../utils/mongo_client";
-import {QuestionSchema} from "../../../../schemas";
+import {QuestionSchema, QuizSchema} from "../../../../schemas";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -59,6 +59,8 @@ async function createQuestion(req, res) {
       }
       
       await newQuestion.save();
+      const quiz = await QuizSchema.findOneAndUpdate({ _id: quizId }, { $push: { questions: newQuestion._id } });
+  
   
       return res.status(200).json({
         message: 'Question added successfully',
