@@ -22,7 +22,7 @@ async function getQuizDetails(req, res) {
 
     try {
         const quiz = await QuizSchema.findById(quizId);
-
+        console.log(quiz)
         return res.status(200).json({
             id: quiz._id,
             title: quiz.title,
@@ -30,7 +30,8 @@ async function getQuizDetails(req, res) {
             description: quiz.description,
             authorId: quiz.authorId,
             scheduledFor: quiz?.scheduledFor,
-            endTime: quiz?.endTime
+            endTime: quiz?.endTime,
+            questions: quiz?.questions
         });
     } catch (err) {
         console.log(err);

@@ -57,7 +57,7 @@ const Info = ({ quiz }) => {
                     <Button onClick={onOpen}>
                         Enroll Users
                     </Button>
-                    <EnrollUsers isOpen={isOpen} onClose={onClose} />
+                    <EnrollUsers quiz={quiz} isOpen={isOpen} onClose={onClose} />
                 </SimpleGrid>
                 <Box mx={2} my={5}>
                 </Box>

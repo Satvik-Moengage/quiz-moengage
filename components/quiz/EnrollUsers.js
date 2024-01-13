@@ -28,12 +28,13 @@ export default function EnrollUsers({ quiz, isOpen, onClose }) {
 
     const onUserSelect = (user, isChecked) => {
         if (isChecked) {
+            console.log(user._id)
             setSelectedUsers([...selectedUsers, user._id]);
         } else {
             setSelectedUsers(selectedUsers.filter(id => id !== user._id));
         }
     };
-
+    console.log(selectedUsers)
     const onSubmit = async () => {
         try {
             const response = await axios.post(`/api/quiz/enroll/${quizId}`, {
@@ -41,13 +42,16 @@ export default function EnrollUsers({ quiz, isOpen, onClose }) {
             });
         
             console.log(response.data.message);
-        
+            setSelectedUsers([])
             onClose();
           } catch (error) {
             console.log(error);
           }
       };
-
+    const handleOnClose = ()=>{
+        setSelectedUsers([])
+        onClose()
+    }
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -66,7 +70,7 @@ export default function EnrollUsers({ quiz, isOpen, onClose }) {
                     </Box>
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={onClose}>Close</Button>
+                    <Button onClick={handleOnClose}>Close</Button>
                     {/* Add the Submit Button */}
                     <Button colorScheme="blue" onClick={onSubmit}>Submit</Button>
                 </ModalFooter>

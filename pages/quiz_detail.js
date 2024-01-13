@@ -19,6 +19,7 @@ export default function QuizDetails (){
         }
     }, [router]);
     const { data: quiz } = useSWR(() => `/api/quiz/details/${quizId}`, fetcher);
+    console.log(quiz)
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>
@@ -34,7 +35,6 @@ export default function QuizDetails (){
                 >
                     <GridItem colSpan={{ base: "auto", md: 4 }}>
                         <Info quiz={quiz} />
-                        <Enrollusers quiz = {quiz}/>
                     </GridItem>
                     <GridItem colSpan={{ base: "auto", lg: 7 }}>
                         <Questions

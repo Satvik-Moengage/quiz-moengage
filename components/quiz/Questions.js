@@ -31,11 +31,8 @@ const validateUser = (currentUserId, authorUserId) =>
 const Questions = ({ quiz }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const { data: questions, mutate } = useSWR(
-    () => `/api/question/creating/${quiz?.id}`,
-    fetcher
-  );
-
+  
+  
   return (
     <Card>
       <Flex justify={'space-between'} mb={3}>
@@ -58,19 +55,18 @@ const Questions = ({ quiz }) => {
         </Tooltip>
       </Flex>
       <Accordion allowToggle>
-        {questions?.length === 0 ? (
+        {quiz?.questions?.length === 0 ? (
           <Text>No questions have been created yet.</Text>
         ) : (
           <>
-            {questions?.map((question) => (
+            {quiz?.questions?.map((question) => (
               <QuestionItem
-                key={question?.entityId}
+                key={question?._id}
                 question={question}
                 isBtnDisabled={validateUser(
                   session?.user?.id?.toString(),
                   quiz?.authorId
                 )}
-                mutate={mutate}
               />
             ))}
           </>
@@ -80,16 +76,13 @@ const Questions = ({ quiz }) => {
   );
 };
 
-const QuestionItem = ({ question, isBtnDisabled, mutate }) => {
-
+const QuestionItem = ({ question, isBtnDisabled}) => {
   const handleDelete = async () => {
     await axios.delete(`/api/question/updating/${question?._id}`);
-    mutate(); 
   };
 
   const handleUpdate = async () => {
     await axios.put(`/api/question/updating/${question?._id}`, question);
-    mutate(); 
   };
 
   return (

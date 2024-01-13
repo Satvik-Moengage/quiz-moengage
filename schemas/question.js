@@ -12,4 +12,4 @@ const QuestionSchema = new Schema({
     imageUrl: { type: String, default: "" },
 });
 
-export default mongoose.models.Question || mongoose.model('Question', QuestionSchema);
+export const Question =  mongoose.models.Question || mongoose.model('Question', QuestionSchema);

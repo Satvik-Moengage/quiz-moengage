@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import mongoose from "mongoose";
-
+import {QuestionSchema} from "./index"
 
 const Quiz = new Schema({
     title: { type: String },
@@ -11,12 +11,7 @@ const Quiz = new Schema({
     createdAt: { type: Date },
     scheduledFor: { type: Date },
     endTime: {type: Date},
-    questions:[
-        { 
-            type: Schema.Types.ObjectId,
-            ref:"Question"
-    }
-    ],
+    questions:{ type : [QuestionSchema]}
 });
 
 Quiz.methods.addQuizTaken = function(quizId) {

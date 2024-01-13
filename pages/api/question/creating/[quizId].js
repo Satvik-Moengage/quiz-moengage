@@ -1,5 +1,6 @@
 import MongoDbClient from "../../../../utils/mongo_client";
 import {QuestionSchema, QuizSchema} from "../../../../schemas";
+import { Question } from "../../../../schemas/question";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -23,7 +24,7 @@ async function createQuestion(req, res) {
 
       switch (type) {
         case 'MCQ':
-          newQuestion = new QuestionSchema({
+          newQuestion = new Question({
             quizId,
             description,
             options,
@@ -33,7 +34,7 @@ async function createQuestion(req, res) {
           break;
         
         case 'True/False':
-          newQuestion = new QuestionSchema({
+          newQuestion = new Question({
             quizId,
             description,
             options: ['True', 'False'],
@@ -43,7 +44,7 @@ async function createQuestion(req, res) {
           break;
         
         case 'Hotspot':
-          newQuestion = new QuestionSchema({
+          newQuestion = new Question({
             quizId,
             description,
             correctAnswer: correctAnswer,
@@ -59,7 +60,7 @@ async function createQuestion(req, res) {
       }
       
       await newQuestion.save();
-      const quiz = await QuizSchema.findOneAndUpdate({ _id: quizId }, { $push: { questions: newQuestion._id } });
+      const quiz = await QuizSchema.findOneAndUpdate({ _id: quizId }, { $push: { questions: newQuestion } });
   
   
       return res.status(200).json({
@@ -80,7 +81,7 @@ async function getQuestions(req, res) {
     await db.initClient();
 
     try {
-        const questions = await QuestionSchema.find({quizId});
+        const questions = await Question.find({quizId});
 
         return res.status(200).json(questions);
     } catch (err) {
