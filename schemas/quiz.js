@@ -16,7 +16,7 @@ const Quiz = new Schema({
             type: Schema.Types.ObjectId,
             ref:"Question"
     }
-    ]
+    ],
 });
 
 Quiz.methods.addQuizTaken = function(quizId) {

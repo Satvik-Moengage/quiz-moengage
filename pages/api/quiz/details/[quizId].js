@@ -17,8 +17,6 @@ export default function handler(req, res) {
 async function getQuizDetails(req, res) {
     const { quizId } = req.query;
 
-    console.log(quizId);
-
     const db = new MongoDbClient();
     await db.initClient();
 

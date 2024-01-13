@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import axios from "axios";
 import Layout from "../components/Layout"
+import Enrollusers from '../components/quiz/EnrollUsers'
 import Head from "next/head"
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 export default function QuizDetails (){
@@ -33,6 +34,7 @@ export default function QuizDetails (){
                 >
                     <GridItem colSpan={{ base: "auto", md: 4 }}>
                         <Info quiz={quiz} />
+                        <Enrollusers quiz = {quiz}/>
                     </GridItem>
                     <GridItem colSpan={{ base: "auto", lg: 7 }}>
                         <Questions
