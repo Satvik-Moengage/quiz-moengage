@@ -128,7 +128,7 @@ export default function Navbar() {
                 py={4}
                 m={0}
                 _focus={{ boxShadow: "none" }}
-                onClick={() => router.replace("/quizzes")}
+                onClick={() => router.replace("/profile")}
               >
                 Quiz Platform
               </Tab>

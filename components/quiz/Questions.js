@@ -22,6 +22,7 @@ import { CgTrash } from 'react-icons/cg';
 import { FiChevronRight, FiChevronDown, FiEdit3 } from 'react-icons/fi';
 import { IoDiscOutline } from 'react-icons/io5';
 import Card from '../Card';
+import { useEffect, useState } from 'react';
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -31,7 +32,24 @@ const validateUser = (currentUserId, authorUserId) =>
 const Questions = ({ quiz }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  
+  const[questions, setQuestions] = useState(quiz?.questions)
+  useEffect(() => {
+    setQuestions(quiz?.questions);
+  }, [quiz?.questions]);
+
+  const handleDelete = async (questionId) => {
+    await axios.delete(`/api/question/updating/${questionId}`);
+    setQuestions(questions.filter((question) => question._id !== questionId));
+  };
+
+  const handleUpdate = async (updatedQuestion) => {
+    await axios.put(`/api/question/updating/${updatedQuestion._id}`, updatedQuestion);
+    setQuestions(
+      questions.map((question) =>
+        question._id === updatedQuestion._id ? updatedQuestion : question
+      )
+    );
+  };
   
   return (
     <Card>
@@ -55,11 +73,11 @@ const Questions = ({ quiz }) => {
         </Tooltip>
       </Flex>
       <Accordion allowToggle>
-        {quiz?.questions?.length === 0 ? (
+        {questions?.length === 0 ? (
           <Text>No questions have been created yet.</Text>
         ) : (
           <>
-            {quiz?.questions?.map((question) => (
+            {questions?.map((question) => (
               <QuestionItem
                 key={question?._id}
                 question={question}
@@ -67,6 +85,8 @@ const Questions = ({ quiz }) => {
                   session?.user?.id?.toString(),
                   quiz?.authorId
                 )}
+                handleDelete={handleDelete}
+                handleUpdate={handleUpdate}
               />
             ))}
           </>
@@ -76,13 +96,21 @@ const Questions = ({ quiz }) => {
   );
 };
 
-const QuestionItem = ({ question, isBtnDisabled}) => {
-  const handleDelete = async () => {
-    await axios.delete(`/api/question/updating/${question?._id}`);
+const QuestionItem = ({ question, isBtnDisabled,handleDelete, handleUpdate}) => {
+  // const handleDelete = async () => {
+  //   await axios.delete(`/api/question/updating/${question?._id}`);
+  // };
+
+  // const handleUpdate = async () => {
+  //   await axios.put(`/api/question/updating/${question?._id}`, question);
+  // };
+
+  const onHandleDelete = () => {
+    handleDelete(question._id);
   };
 
-  const handleUpdate = async () => {
-    await axios.put(`/api/question/updating/${question?._id}`, question);
+  const onHandleUpdate = () => {
+    handleUpdate(question);
   };
 
   return (
@@ -117,7 +145,7 @@ const QuestionItem = ({ question, isBtnDisabled}) => {
                     isRound
                     disabled={isBtnDisabled}
                     bg={"gray.300"}
-                    onClick={handleUpdate}
+                    onClick={onHandleUpdate}
                   />
                 </Tooltip>
                 <Tooltip
@@ -133,7 +161,7 @@ const QuestionItem = ({ question, isBtnDisabled}) => {
                     isRound
                     disabled={isBtnDisabled}
                     bg={"gray.300"}
-                    onClick={handleDelete}
+                    onClick={onHandleDelete}
                   />
                 </Tooltip>
               </HStack>
