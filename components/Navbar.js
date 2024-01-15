@@ -88,7 +88,7 @@ export default function Navbar() {
           </HStack>
           <HStack spacing={3} display="flex" alignItems="center">
             {!data?.user?.isAdmin && (
-              <Button onClick={() => setOpen(true)}>Join Quiz</Button>
+              <div></div>
             )}
             <Menu>
               <MenuButton
@@ -178,7 +178,7 @@ export default function Navbar() {
               <InputLeftElement pointerEvents="none">
                 <AiOutlineSearch />
               </InputLeftElement>
-              <Input type="tel" placeholder="Search Quiz..." />
+              {/* <Input type="tel" placeholder="Search Quiz..." /> */}
             </InputGroup>
           </HStack>
         </Flex>

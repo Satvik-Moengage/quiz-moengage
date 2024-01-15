@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Flex, Box, FormControl, FormLabel, Input, Stack, Button, Heading, Textarea, useColorModeValue, SimpleGrid, GridItem, Select, useToast } from "@chakra-ui/react";
+import { Flex, Box, FormControl, FormLabel, Input, Stack, Button, Heading, Textarea, useColorModeValue, SimpleGrid, GridItem, Select, useToast, RadioGroup, Radio, HStack } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { createQuestion } from "../services/question";
@@ -14,16 +14,29 @@ export default function CreateQuestion() {
     const image_url = null
     const [image, setImage] = useState(null);
     const [description, setDescription] = useState("");
-    const [option1, setOption1] = useState("");
-    const [option2, setOption2] = useState("");
-    const [option3, setOption3] = useState("");
-    const [option4, setOption4] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState("");
     const [loading, setLoading] = useState(false);
     const [questionType, setQuestionType] = useState("mcq");
     const [marker, setMarker] = useState({ top: null, left: null, width: null, height: null });
     const [dragging, setDragging] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
+    const [options1, setOptions] = useState([""])
+
+    const handleAddOption = () => {
+        setOptions([...options1, ""]);
+    };
+
+    const handleOptionChange = (index, event) => {
+        const newOptions = [...options1];
+        newOptions[index] = event.target.value;
+
+        if (index === 0 && correctAnswer === '') {
+            setCorrectAnswer(newOptions[0]);
+        }
+        
+        setOptions(newOptions);
+    };
+
     const handleFileChange = (event) => {
         setImage(event.target.files[0]);
     };
@@ -58,45 +71,39 @@ export default function CreateQuestion() {
 
     const resetForm = () => {
         setDescription("");
-        setOption1("");
-        setOption2("");
-        setOption3("");
-        setOption4("");
         setCorrectAnswer("");
         setQuestionType("");
         setLoading(false);
     };
 
     const uploadImage = async () => {
-        try{
-        const formData = new FormData();
-        formData.append("file", image);
-        formData.append("upload_preset", "wc2ewopf");
-        const response = await fetch("https://api.cloudinary.com/v1_1/dnb0henp1/image/upload", {
-            method: "POST",
-            body: formData
-        })
-        const data=await response.json()
-        image_url = data.url
+        try {
+            const formData = new FormData();
+            formData.append("file", image);
+            formData.append("upload_preset", "wc2ewopf");
+            const response = await fetch("https://api.cloudinary.com/v1_1/dnb0henp1/image/upload", {
+                method: "POST",
+                body: formData
+            })
+            const data = await response.json()
+            image_url = data.url
         }
-        
-        catch{
+
+        catch {
             console.log("Error");
         }
     }
 
     const clickSubmit = async () => {
         setLoading(true);
-        let options = [];
         let questionData = {};
         if (questionType === "mcq") {
-            options = [option1, option2, option3, option4];
-            questionData = { description, options, correctAnswer, type: 'MCQ' };
+            questionData = { description, options: options1, correctAnswer, type: 'MCQ' };
         }
 
         else if (questionType === "tf") {
-            options = ['True', 'False'];
-            questionData = { description, options, correctAnswer: option1, type: 'True/False' };
+            options1 = ['True', 'False'];
+            questionData = { description, options: options1, correctAnswer, type: 'True/False' };
         }
 
         else if (questionType === "hotspot") {
@@ -148,36 +155,23 @@ export default function CreateQuestion() {
                             </FormControl>
                             {questionType === 'mcq' && (
                                 <>
-                                    <FormControl id="option1" as={GridItem} colSpan={[6, 3]}>
-                                        <FormLabel>Option 1</FormLabel>
-                                        <Input variant={"flushed"} color={"gray.500"} placeholder={"Option 1"} onChange={(e) => setOption1(e.target.value)} />
-                                    </FormControl>
-                                    <FormControl id="option2" as={GridItem} colSpan={[6, 3]}>
-                                        <FormLabel>Option 2</FormLabel>
-                                        <Input variant={"flushed"} color={"gray.500"} placeholder={"Option 2"} onChange={(e) => setOption2(e.target.value)} />
-                                    </FormControl>
-                                    <FormControl id="option3" as={GridItem} colSpan={[6, 3]}>
-                                        <FormLabel>Option 3</FormLabel>
-                                        <Input variant={"flushed"} color={"gray.500"} placeholder={"Option 3"} onChange={(e) => setOption3(e.target.value)} />
-                                    </FormControl>
-                                    <FormControl id="option4" as={GridItem} colSpan={[6, 3]}>
-                                        <FormLabel>Option 4</FormLabel>
-                                        <Input variant={"flushed"} color={"gray.500"} placeholder={"Option 4"} onChange={(e) => setOption4(e.target.value)} />
-                                    </FormControl>
-                                    <FormControl id="correctAns" as={GridItem} colSpan={6}>
-                                        <FormLabel>Correct Answer</FormLabel>
-                                        <Select placeholder="Choose the correct Answer" onChange={(e) => setCorrectAnswer(e.target.value)}>
-                                            <option value={option1}>{option1}</option>
-                                            <option value={option2}>{option2}</option>
-                                            <option value={option3}>{option3}</option>
-                                            <option value={option4}>{option4}</option>
-                                        </Select>
-                                    </FormControl>
-                                </>)}
+                                {options1.map((option, index) => (
+                                    <GridItem key={index} colSpan={[6, 3]}>
+                                        <Flex alignItems="center" mb={4}>
+                                            <Radio mr={2} isChecked={correctAnswer === option} value={option} onChange={(e) => setCorrectAnswer(e.target.value)} />
+                                            <FormControl id={`option${index + 1}`}>
+                                                <FormLabel ml={2}>Option {index + 1}</FormLabel>
+                                                <Input variant={"flushed"} color={"gray.500"} placeholder={`Option ${index + 1}`} value={option} onChange={(e) => handleOptionChange(index, e)} />
+                                            </FormControl>
+                                        </Flex>
+                                    </GridItem>
+                                ))}
+                                <Button onClick={handleAddOption}>Add Option</Button>
+                            </>)}
                             {questionType === 'tf' && (
                                 <FormControl id="correctAnswer" as={GridItem} colSpan={6}>
                                     <FormLabel>Answer</FormLabel>
-                                    <Select placeholder="Choose the answer" onChange={(e) => setOption1(e.target.value)}>
+                                    <Select placeholder="Choose the answer" onChange={(e) => setCorrectAnswer(e.target.value)}>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </Select>

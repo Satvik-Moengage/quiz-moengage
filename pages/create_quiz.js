@@ -51,8 +51,6 @@ export default function CreateQuiz() {
             endTime: endTime,
         };
 
-        console.log(quiz);
-
         const resetForm = () => {
             setTitle("");
             setDescription("");

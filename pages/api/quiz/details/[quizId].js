@@ -43,7 +43,6 @@ async function getQuizDetails(req, res) {
 
 async function updateDetails(req, res) {
     const { quizId } = req.query;
-    console.log(quizId)
 
     const db = new MongoDbClient();
     await db.initClient();

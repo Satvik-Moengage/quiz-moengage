@@ -19,7 +19,7 @@ async function getCachedQuiz(req, res) {
     // Now retrieve the questions from user document
     let user = await UserSchema.findById(session.user.id);
     const quiz = await QuizSchema.findById(quizId);
-    const questions = await QuestionSchema.find({ quizId: quizId });
+    const questions = quiz.questions;
     const quizData = {
         questions: questions,
         duration: quiz.duration,

@@ -22,26 +22,21 @@ const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 export default function EnrollUsers({ quiz, isOpen, onClose }) {
     const { data: users } = useSWR("/api/user", fetcher);
     const quizId = quiz?.id
-    console.log(quizId);
 
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     const onUserSelect = (user, isChecked) => {
         if (isChecked) {
-            console.log(user._id)
             setSelectedUsers([...selectedUsers, user._id]);
         } else {
             setSelectedUsers(selectedUsers.filter(id => id !== user._id));
         }
     };
-    console.log(selectedUsers)
     const onSubmit = async () => {
         try {
             const response = await axios.post(`/api/quiz/enroll/${quizId}`, {
               usersEnrolled: selectedUsers
             });
-        
-            console.log(response.data.message);
             setSelectedUsers([])
             onClose();
           } catch (error) {

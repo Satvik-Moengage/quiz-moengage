@@ -41,7 +41,6 @@ async function createQuiz(req, res) {
             endTime,
         } = req.body;
 
-        console.log(req.body.endTime);
 
         const newQuiz = new QuizSchema({
             title: title,
@@ -53,8 +52,6 @@ async function createQuiz(req, res) {
             scheduledFor: scheduledFor,
             endTime: endTime
         });
-
-        console.log("=====>",newQuiz);
 
         await newQuiz.save();
 

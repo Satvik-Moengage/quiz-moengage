@@ -21,19 +21,13 @@ async function startQuiz(req, res) {
     const { slug } = req.query;
     const quizId = slug[0];
     const userId = slug[1];
-
-    const db = new MongoDbClient();
-    await db.initClient();
+    mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
     try {
-        const user = await UserSchema.findById(userId);
-        const quiz = await QuizSchema.findById(quizId);
 
-        const questions = await QuestionSchema.find({ quizId: quizId });
-        console.log(questions,"questions");
+        const quiz = await Quiz.findById(quizId);
 
-        // Confirm if user already enrolled
-        if (!user.quizzesEnrolled.includes(quizId)) {
+        if (!quiz.usersEnrolled.includes(userId)) {
             return res.status(409).json({
                 error: "You are not enrolled to the quiz",
             });
@@ -48,13 +42,13 @@ async function startQuiz(req, res) {
         }
 
         const quizData = {
-            questions: questions,
+            questions: quiz.questions,
             duration: quiz.duration,
         };
         
 
         return res.status(200).json({
-            message: `Quiz started for ${user.name}`,
+            message: `Quiz started`,
             quizData: quizData
         });
     } catch (err) {

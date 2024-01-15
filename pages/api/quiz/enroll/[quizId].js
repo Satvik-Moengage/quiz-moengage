@@ -18,14 +18,8 @@ async function updateAssignedUsers(req, res) {
     try {
         let quiz = await QuizSchema.findById(quizId);
         let users = await UserSchema.find({_id: {$in: usersEnrolled}});
-
-        // Confirm if user already enrolled
+        quiz.usersEnrolled = []
         for(let i=0; i<users.length; i++){
-            if (quiz.usersEnrolled.includes(users[i]._id)){
-                return res.status(409).json({
-                    error: `User already enrolled`
-                })
-            }
             quiz.usersEnrolled.push(users[i]._id); 
             users[i].quizzesEnrolled.push(quizId);
             await users[i].save();

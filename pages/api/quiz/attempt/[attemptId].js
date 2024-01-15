@@ -17,7 +17,6 @@ async function getResponses(req, res) {
     try {
         let quizTaken = await QuizTakenSchema
             .findOne({ "attemptId": attemptId });
-        console.log(attemptId,"attemptid in api")
         quizTaken = quizTaken.toJSON();
 
         let attemptInfo = new Object();

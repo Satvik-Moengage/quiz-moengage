@@ -164,7 +164,6 @@ export default function Quiz() {
                 };
             }
             else if (ques.type === "Hotspot") {
-                console.log(ques)
                 questObj = {
                     text: ques?.description,
                     options: ques?.options,
@@ -174,7 +173,6 @@ export default function Quiz() {
             }
 
             questionsData.push(questObj);
-            console.log(questionsData)
             let ansObj = {
                 selectedOption: null,
             };
@@ -221,7 +219,6 @@ export default function Quiz() {
     }
 
     const getBoxCoordinates = () => {
-        console.log(marker);
         return marker
     }
 

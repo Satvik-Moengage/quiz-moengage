@@ -13,7 +13,6 @@ export default async function handler(req, res) {
 
 async function createQuestion(req, res) {
     const { quizId } = req.query;
-    
     const { description, options, correctAnswer, type, imageUrl } = req.body;
   
     const db = new MongoDbClient();

@@ -43,7 +43,6 @@ async function updateQuestion(req, res) {
 
 async function removeQuestion(req, res) {
     const { questionId } = req.query;
-    console.log(questionId)
     const db = new MongoDbClient();
     await db.initClient();
 
