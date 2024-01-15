@@ -51,8 +51,7 @@ async function createQuiz(req, res) {
             usersEnrolled: [],
             createdAt: Date.now(),
             scheduledFor: scheduledFor,
-            endTime: endTime,
-            questions: []
+            endTime: endTime
         });
 
         console.log("=====>",newQuiz);

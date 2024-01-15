@@ -12,21 +12,25 @@ import {
 import Card from "../Card";
 import { CgTrash } from "react-icons/cg";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { removeQuiz } from "../../services/quiz";
 import ConfirmDialog from "../common/ConfirmDialog";
 
 const AuthorQuizzes = ({ quizzes }) => {
+    const [quizzesState, setQuizzesState] = useState(quizzes);
+    useEffect(() => {
+            setQuizzesState(quizzes);
+      }, quizzes);
     return (
         <Box px={8}>
             <Heading py={5}>My Quizzes</Heading>
             <Card>
-                {quizzes?.length === 0 ? (
+                {quizzesState?.length === 0 ? (
                     <Text>You haven&apos;t authored any quizzes yet.</Text>
                 ) : (
                     <>
-                        {quizzes?.map((quiz) => (
-                            <QuizItem key={quiz?._id} quiz={quiz} />
+                        {quizzesState?.map((quiz) => (
+                            <QuizItem key={quiz?._id} quiz={quiz} setQuizzesState={setQuizzesState}  />
                         ))}
                     </>
                 )}
@@ -35,7 +39,7 @@ const AuthorQuizzes = ({ quizzes }) => {
     );
 };
 
-const QuizItem = ({ quiz }) => {
+const QuizItem = ({ quiz, setQuizzesState }) => {
     const router = useRouter();
     const toast = useToast();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -54,6 +58,7 @@ const QuizItem = ({ quiz }) => {
                         duration: 9000,
                         isClosable: true,
                     });
+                    setQuizzesState(prev => prev.filter(q => q._id !== quiz._id));
                     router.replace("/my_quizzes");
                 } else {
                     toast({
