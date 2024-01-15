@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Flex, Box, FormControl, FormLabel, Input, Stack, Button, Heading, Textarea, useColorModeValue, SimpleGrid, GridItem, Select, useToast, RadioGroup, Radio, HStack } from "@chakra-ui/react";
+import { Flex, Box, FormControl, FormLabel,Checkbox, Input, Stack, Button, Heading, Textarea, useColorModeValue, SimpleGrid, GridItem, Select, useToast, RadioGroup, Radio, HStack } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { createQuestion } from "../services/question";
@@ -14,9 +14,9 @@ export default function CreateQuestion() {
     const image_url = null
     const [image, setImage] = useState(null);
     const [description, setDescription] = useState("");
-    const [correctAnswer, setCorrectAnswer] = useState("");
+    const [correctAnswer, setCorrectAnswer] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [questionType, setQuestionType] = useState("mcq");
+    const [questionType, setQuestionType] = useState("");
     const [marker, setMarker] = useState({ top: null, left: null, width: null, height: null });
     const [dragging, setDragging] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
@@ -97,8 +97,11 @@ export default function CreateQuestion() {
     const clickSubmit = async () => {
         setLoading(true);
         let questionData = {};
-        if (questionType === "mcq") {
+        if (questionType === "mcq" ) {
             questionData = { description, options: options1, correctAnswer, type: 'MCQ' };
+        }
+        if (questionType === "mcm" ) {
+            questionData = { description, options: options1, correctAnswer, type: 'MCM' };
         }
 
         else if (questionType === "tf") {
@@ -119,12 +122,13 @@ export default function CreateQuestion() {
         }
 
         createQuestion(quizId, questionData).then((data) => {
+            console.log(questionData);
             if (data?.message) {
                 resetForm();
                 toast({ title: "Success", description: data?.message, status: "success", duration: 9000, isClosable: true });
                 router.push({ pathname: "/quiz_detail", query: { quizId: quizId } });
             } else {
-                toast({ title: "Error", description: data?.error, status: "success", duration: 9000, isClosable: true });
+                toast({ title: "Error", description: data?.error, status: "error", duration: 9000, isClosable: true });
             }
         }).finally(() => setLoading(false));
     };
@@ -144,7 +148,8 @@ export default function CreateQuestion() {
                             <FormControl id="questionType" as={GridItem} colSpan={6}>
                                 <FormLabel>Question Type</FormLabel>
                                 <Select placeholder="Select the question type" onChange={(e) => setQuestionType(e.target.value)}>
-                                    <option value="mcq">Multiple Choice Question</option>
+                                    <option value="mcq">Multiple Choice Question (Single Correct)</option>
+                                    <option value="mcm">Multiple Choice Question (Multiple Correct)</option>
                                     <option value="tf">True/False</option>
                                     <option value="hotspot">Hotspot</option>
                                 </Select>
@@ -168,6 +173,23 @@ export default function CreateQuestion() {
                                 ))}
                                 <Button onClick={handleAddOption}>Add Option</Button>
                             </>)}
+
+                            {questionType === 'mcm' && (
+<>
+{options1.map((option, index) => (
+<GridItem key={index} colSpan={[6, 3]}>
+<Flex alignItems="center" mb={4}>
+<Checkbox mr={2} isChecked={correctAnswer.includes(option)} value={option} onChange={(e) => setCorrectAnswer(e.target.checked ? [...correctAnswer, e.target.value] : correctAnswer.filter((ca) => ca !== e.target.value))} />
+<FormControl id={`option${index + 1}`}>
+<FormLabel ml={2}>Option {index + 1}</FormLabel>
+<Input variant={"flushed"} color={"gray.500"} placeholder={`Option ${index + 1}`} value={option} onChange={(e) => handleOptionChange(index, e)} />
+</FormControl>
+</Flex>
+</GridItem>
+))}
+<Button onClick={handleAddOption}>Add Option</Button>
+</>)}
+
                             {questionType === 'tf' && (
                                 <FormControl id="correctAnswer" as={GridItem} colSpan={6}>
                                     <FormLabel>Answer</FormLabel>

@@ -33,9 +33,10 @@ const Questions = ({ quiz }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const[questions, setQuestions] = useState(quiz?.questions)
+  
   useEffect(() => {
     setQuestions(quiz?.questions);
-  }, [quiz?.questions]);
+}, [quiz?.questions]);
 
   const handleDelete = async (questionId) => {
     await axios.delete(`/api/question/updating/${questionId}`);
@@ -172,7 +173,7 @@ const QuestionItem = ({ question, isBtnDisabled,handleDelete, handleUpdate}) => 
               <OptionItem
                 key={i}
                 color={
-                  question?.correctAnswer === opt
+                  question?.correctAnswer.includes(opt)
                     ? 'green'
                     : 'gray.800'
                 }

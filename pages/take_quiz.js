@@ -30,10 +30,10 @@ import { Image } from "@chakra-ui/image";
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export default function Quiz() {
+    const { data: session } = useSession();
     const router = useRouter();
     const toast = useToast();
     const { quizId } = router.query;
-    const { data: session } = useSession();
 
     const [allQuestions, setAllQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState(0);

@@ -21,11 +21,13 @@ async function startQuiz(req, res) {
     const { slug } = req.query;
     const quizId = slug[0];
     const userId = slug[1];
-    mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    
+    const db = new MongoDbClient();
+    await db.initClient();
 
     try {
 
-        const quiz = await Quiz.findById(quizId);
+        const quiz = await QuizSchema.findById(quizId);
 
         if (!quiz.usersEnrolled.includes(userId)) {
             return res.status(409).json({

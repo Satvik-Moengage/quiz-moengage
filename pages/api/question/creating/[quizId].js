@@ -14,7 +14,13 @@ export default async function handler(req, res) {
 async function createQuestion(req, res) {
     const { quizId } = req.query;
     const { description, options, correctAnswer, type, imageUrl } = req.body;
-  
+
+    if (!quizId || quizId === 'undefined') {
+      return res.status(400).json({
+        error: 'Error getting Quiz Id',
+      });
+    }
+
     const db = new MongoDbClient();
     await db.initClient();
     
@@ -23,6 +29,16 @@ async function createQuestion(req, res) {
 
       switch (type) {
         case 'MCQ':
+          newQuestion = new Question({
+            quizId,
+            description,
+            options,
+            correctAnswer,
+            type,
+          });
+          break;
+
+          case 'MCM':
           newQuestion = new Question({
             quizId,
             description,
