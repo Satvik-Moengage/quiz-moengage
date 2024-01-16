@@ -150,153 +150,227 @@ export default function CreateQuestion() {
     };
 
     return (
-        <Box>
-            <Head>
-                <title>Quiz Platform | Create Question</title>
-            </Head>
-            <Flex justify={"center"} align={"flex-start"} bg={useColorModeValue("gray.50", "gray.800")} mt={2}>
-                <Stack spacing={8} mx={"auto"} w={"768px"}>
-                    <Stack align={"center"}>
-                        <Heading fontSize={"4xl"}>Create Question</Heading>
-                    </Stack>
-                    <Box rounded={"lg"} bg={useColorModeValue("white", "gray.700")} boxShadow={"lg"} p={8}>
-                        <SimpleGrid spacing={6} columns={6} mb={8}>
-                            <FormControl id="questionType" as={GridItem} colSpan={6}>
-                                <FormLabel>Question Type</FormLabel>
-                                <Select placeholder="Select the question type" onChange={(e) => setQuestionType(e.target.value)}>
-                                    <option value="mcq">Multiple Choice Question (Single Correct)</option>
-                                    <option value="mcm">Multiple Choice Question (Multiple Correct)</option>
-                                    <option value="tf">True/False</option>
-                                    <option value="mtf">Match The Following</option>
-                                    <option value="reorder">Reorder the Sentences</option>
-                                    <option value="fib">Fill in the blanks</option>
-                                    <option value="hotspot">Hotspot</option>
-                                </Select>
-                            </FormControl>
-                            <FormControl id="description" as={GridItem} colSpan={6}>
-                                <FormLabel>Question</FormLabel>
-                                <Textarea placeholder="Type Question here ..." size="md" onChange={(e) => setDescription(e.target.value)} />
-                            </FormControl>
-                            {/* Multi choice single correct */}
-                            {questionType === 'mcq' && (
-                                <>
-                                    {options1.map((option, index) => (
-                                        <GridItem key={index} colSpan={[6, 3]}>
-                                            <Flex alignItems="center" mb={4}>
-                                                <Radio mr={2} isChecked={correctAnswer === option} value={option} onChange={(e) => setCorrectAnswer(e.target.value)} />
-                                                <FormControl id={`option${index + 1}`}>
-                                                    <FormLabel ml={2}>Option {index + 1}</FormLabel>
-                                                    <Input variant={"flushed"} color={"gray.500"} placeholder={`Option ${index + 1}`} value={option} onChange={(e) => handleOptionChange(index, e)} />
-                                                </FormControl>
-                                            </Flex>
-                                        </GridItem>
-                                    ))}
-                                    <Button onClick={handleAddOption}>Add Option</Button>
-                                </>)}
-                            {/* Multiple choice multi correct */}
-                            {questionType === 'mcm' && (
-                                <>
-                                    {options1.map((option, index) => (
-                                        <GridItem key={index} colSpan={[6, 3]}>
-                                            <Flex alignItems="center" mb={4}>
-                                                <Checkbox mr={2} isChecked={correctAnswer.includes(option)} value={option} onChange={(e) => setCorrectAnswer(e.target.checked ? [...correctAnswer, e.target.value] : correctAnswer.filter((ca) => ca !== e.target.value))} />
-                                                <FormControl id={`option${index + 1}`}>
-                                                    <FormLabel ml={2}>Option {index + 1}</FormLabel>
-                                                    <Input variant={"flushed"} color={"gray.500"} placeholder={`Option ${index + 1}`} value={option} onChange={(e) => handleOptionChange(index, e)} />
-                                                </FormControl>
-                                            </Flex>
-                                        </GridItem>
-                                    ))}
-                                    <Button onClick={handleAddOption}>Add Option</Button>
-                                </>)}
-                            {/* True/False */}
-                            {questionType === 'tf' && (
-                                <FormControl id="correctAnswer" as={GridItem} colSpan={6}>
-                                    <FormLabel>Answer</FormLabel>
-                                    <Select placeholder="Choose the answer" onChange={(e) => setCorrectAnswer(e.target.value)}>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </Select>
-                                </FormControl>
-                            )}
+      <Box>
+        <Head>
+          <title>Quiz Platform | Create Question</title>
+        </Head>
+        <Flex
+          justify={"center"}
+          align={"flex-start"}
+          bg={useColorModeValue("gray.50", "gray.800")}
+          mt={2}
+        >
+          <Stack spacing={8} mx={"auto"} w={"768px"}>
+            <Stack align={"center"}>
+              <Heading fontSize={"4xl"}>Create Question</Heading>
+            </Stack>
+            <Box
+              rounded={"lg"}
+              bg={useColorModeValue("white", "gray.700")}
+              boxShadow={"lg"}
+              p={8}
+            >
+              <SimpleGrid spacing={6} columns={6} mb={8}>
+                <FormControl id="questionType" as={GridItem} colSpan={6}>
+                  <FormLabel>Question Type</FormLabel>
+                  <Select
+                    placeholder="Select the question type"
+                    onChange={(e) => setQuestionType(e.target.value)}
+                  >
+                    <option value="mcq">
+                      Multiple Choice Question (Single Correct)
+                    </option>
+                    <option value="mcm">
+                      Multiple Choice Question (Multiple Correct)
+                    </option>
+                    <option value="tf">True/False</option>
+                    <option value="mtf">Match The Following</option>
+                    <option value="reorder">Reorder the Sentences</option>
+                    <option value="fib">Fill in the blanks</option>
+                    <option value="hotspot">Hotspot</option>
+                  </Select>
+                </FormControl>
+                <FormControl id="description" as={GridItem} colSpan={6}>
+                  <FormLabel>Question</FormLabel>
+                  <Textarea
+                    placeholder="Type Question here ..."
+                    size="md"
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </FormControl>
+                {/* Multi choice single correct */}
+                {questionType === "mcq" && (
+                  <>
+                    {options1.map((option, index) => (
+                      <GridItem key={index} colSpan={[6, 3]}>
+                        <Flex alignItems="center" mb={4}>
+                          <Radio
+                            mr={2}
+                            isChecked={correctAnswer === option}
+                            value={option}
+                            onChange={(e) => setCorrectAnswer(e.target.value)}
+                          />
+                          <FormControl id={`option${index + 1}`}>
+                            <FormLabel ml={2}>Option {index + 1}</FormLabel>
+                            <Input
+                              variant={"flushed"}
+                              color={"gray.500"}
+                              placeholder={`Option ${index + 1}`}
+                              value={option}
+                              onChange={(e) => handleOptionChange(index, e)}
+                            />
+                          </FormControl>
+                        </Flex>
+                      </GridItem>
+                    ))}
+                    <Button onClick={handleAddOption}>Add Option</Button>
+                  </>
+                )}
+                {/* Multiple choice multi correct */}
+                {questionType === "mcm" && (
+                  <>
+                    {options1.map((option, index) => (
+                      <GridItem key={index} colSpan={[6, 3]}>
+                        <Flex alignItems="center" mb={4}>
+                          <Checkbox
+                            mr={2}
+                            isChecked={correctAnswer.includes(option)}
+                            value={option}
+                            onChange={(e) =>
+                              setCorrectAnswer(
+                                e.target.checked
+                                  ? [...correctAnswer, e.target.value]
+                                  : correctAnswer.filter(
+                                      (ca) => ca !== e.target.value
+                                    )
+                              )
+                            }
+                          />
+                          <FormControl id={`option${index + 1}`}>
+                            <FormLabel ml={2}>Option {index + 1}</FormLabel>
+                            <Input
+                              variant={"flushed"}
+                              color={"gray.500"}
+                              placeholder={`Option ${index + 1}`}
+                              value={option}
+                              onChange={(e) => handleOptionChange(index, e)}
+                            />
+                          </FormControl>
+                        </Flex>
+                      </GridItem>
+                    ))}
+                    <Button onClick={handleAddOption}>Add Option</Button>
+                  </>
+                )}
+                {/* True/False */}
+                {questionType === "tf" && (
+                  <FormControl id="correctAnswer" as={GridItem} colSpan={6}>
+                    <FormLabel>Answer</FormLabel>
+                    <Select
+                      placeholder="Choose the answer"
+                      onChange={(e) => setCorrectAnswer(e.target.value)}
+                    >
+                      <option value="True">True</option>
+                      <option value="False">False</option>
+                    </Select>
+                  </FormControl>
+                )}
 
-                            {/* Match the following */}
-                            {questionType === 'mtf' && (
-                                <>
-                                    to be added
-                                </>
-                            )}
-                            {/* reorder sentence */}
-                            {questionType === 'reorder' && (
-                                <>
-                                    {sentences.map((sentence, index) => (
-                                        <GridItem key={index} colSpan={[6, 3]}>
-                                            <FormControl id={`sentence${index + 1}`}>
-                                                <FormLabel>Sentence {index + 1}</FormLabel>
-                                                <Input variant={"flushed"} color={"gray.500"} placeholder={`Sentence ${index + 1}`} value={sentence} onChange={(e) => handleSentenceChange(index, e)} />
-                                            </FormControl>
-                                        </GridItem>
-                                    ))}
-                                    <Button onClick={handleAddSentence}>Add Sentence</Button>
-                                </>
-                            )}
-                            {/* fill in the blanks */}
-                            {questionType === 'fib' && (
-                                <>
-                                    to be added
-                                </>
-                            )}
-                            {/* Hotspot type */}
-                            {questionType === 'hotspot' && (
-                                <>
-                                    <FormControl id="questionImage" as={GridItem} colSpan={6}>
-                                        <FormLabel fontSize="lg" mb={2}>Upload Image</FormLabel>
-                                        <Input type="file" onChange={handleFileChange} />
-                                        <Box position={"relative"} mt={4}>
-                                            <p mb={2} fontSize="sm" color="gray.500">Uploaded Image:</p>
+                {/* Match the following */}
+                {questionType === "mtf" && <>to be added</>}
+                {/* reorder sentence */}
+                {questionType === "reorder" && (
+                  <>
+                    {sentences.map((sentence, index) => (
+                      <GridItem key={index} colSpan={[6, 3]}>
+                        <FormControl id={`sentence${index + 1}`}>
+                          <FormLabel>Sentence {index + 1}</FormLabel>
+                          <Input
+                            variant={"flushed"}
+                            color={"gray.500"}
+                            placeholder={`Sentence ${index + 1}`}
+                            value={sentence}
+                            onChange={(e) => handleSentenceChange(index, e)}
+                          />
+                        </FormControl>
+                      </GridItem>
+                    ))}
+                    <Button onClick={handleAddSentence}>Add Sentence</Button>
+                  </>
+                )}
+                {/* fill in the blanks */}
+                {questionType === "fib" && <>to be added</>}
+                {/* Hotspot type */}
+                {questionType === "hotspot" && (
+                  <>
+                    <FormControl id="questionImage" as={GridItem} colSpan={6}>
+                      <FormLabel fontSize="lg" mb={2}>
+                        Upload Image
+                      </FormLabel>
+                      <Input type="file" onChange={handleFileChange} />
+                      <Box position={"relative"} mt={4}>
+                        <p mb={2} fontSize="sm" color="gray.500">
+                          Uploaded Image:
+                        </p>
 
-                                            {image ? (
-                                                <>
-                                                    <Image
-                                                        boxSize="200px"
-                                                        src={imageUrl ? imageUrl : URL.createObjectURL(image)}
-                                                        onMouseDown={startDraw}
-                                                        onMouseMove={draw}
-                                                        onMouseUp={endDraw}
-                                                        onDragStart={(event) => event.preventDefault()}
-                                                        alt="Hotspot"
-                                                        style={{ position: 'relative', display: 'inline-block', overflow: 'hidden', width: '200%', height: '200%' }}
-                                                    />
-                                                    <Box
-                                                        style={{
-                                                            position: 'absolute',
-                                                            top: marker.top + 'px',
-                                                            left: marker.left + 'px',
-                                                            width: marker.width + 'px',
-                                                            height: marker.height + 'px',
-                                                            border: '2px solid red',
-                                                            boxSizing: 'border-box',
-                                                            pointerEvents: 'none'
-                                                        }}
-                                                    />
-                                                </>
-                                            ) : (
-                                                <p>No image uploaded yet</p>
-                                            )}
-                                        </Box>
-                                    </FormControl>
-                                </>
-                            )}
-                        </SimpleGrid>
-                        <Stack spacing={10}>
-                            <Button bg={"blue.400"} color={"white"} leftIcon={<FiEdit3 />} loadingText={"Saving"} isLoading={loading} _hover={{ bg: "blue.500" }} onClick={clickSubmit}>
-                                Create
-                            </Button>
-                        </Stack>
-                    </Box>
-                </Stack>
-            </Flex>
-        </Box>
+                        {image ? (
+                          <>
+                            <Image
+                              boxSize="200px"
+                              src={
+                                imageUrl ? imageUrl : URL.createObjectURL(image)
+                              }
+                              onMouseDown={startDraw}
+                              onMouseMove={draw}
+                              onMouseUp={endDraw}
+                              onDragStart={(event) => event.preventDefault()}
+                              alt="Hotspot"
+                              style={{
+                                position: "relative",
+                                display: "inline-block",
+                                overflow: "hidden",
+                                width: "200%",
+                                height: "200%",
+                              }}
+                            />
+                            <Box
+                              style={{
+                                position: "absolute",
+                                top: marker.top + "px",
+                                left: marker.left + "px",
+                                width: marker.width + "px",
+                                height: marker.height + "px",
+                                border: "2px solid red",
+                                boxSizing: "border-box",
+                                pointerEvents: "none",
+                              }}
+                            />
+                          </>
+                        ) : (
+                          <p>No image uploaded yet</p>
+                        )}
+                      </Box>
+                    </FormControl>
+                  </>
+                )}
+              </SimpleGrid>
+              <Stack spacing={10}>
+                <Button
+                  bg="#00237c"
+                  color={"white"}
+                  leftIcon={<FiEdit3 />}
+                  loadingText={"Saving"}
+                  isLoading={loading}
+                  _hover={{ bg: "blue.500" }}
+                  onClick={clickSubmit}
+                >
+                  Create
+                </Button>
+              </Stack>
+            </Box>
+          </Stack>
+        </Flex>
+      </Box>
     );
 }
 
