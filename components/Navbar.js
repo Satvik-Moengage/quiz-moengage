@@ -87,9 +87,7 @@ export default function Navbar() {
             />
           </HStack>
           <HStack spacing={3} display="flex" alignItems="center">
-            {!data?.user?.isAdmin && (
-              <div></div>
-            )}
+            {!data?.user?.isAdmin && <div></div>}
             <Menu>
               <MenuButton
                 as={Avatar}
@@ -99,6 +97,7 @@ export default function Navbar() {
                   .toLowerCase()
                   .replaceAll(" ", "")}.svg`}
               />
+              <p>{data?.user?.name}</p>
               <MenuList>
                 <MenuItem
                   icon={<RiUserHeartFill />}
