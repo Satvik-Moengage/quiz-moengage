@@ -91,124 +91,112 @@ export default function CreateQuiz() {
     };
 
     return (
-        <Box>
-            <Head>
-                <title>Quiz Platform | Create Quiz</title>
-            </Head>
-            <Flex
-                justify={"center"}
-                align={"flex-start"}
-                bg={useColorModeValue("gray.50", "gray.800")}
-                mt={2}
+      <Box>
+        <Head>
+          <title>Quiz Platform | Create Quiz</title>
+        </Head>
+        <Flex
+          justify={"center"}
+          align={"flex-start"}
+          bg={useColorModeValue("gray.50", "gray.800")}
+          mt={2}
+        >
+          <Stack spacing={8} mx={"auto"} w={"450px"}>
+            <Stack align={"center"}>
+              <Heading fontSize={"4xl"}>Create Quiz</Heading>
+            </Stack>
+            <Box
+              rounded={"lg"}
+              bg={useColorModeValue("white", "gray.700")}
+              boxShadow={"lg"}
+              p={8}
             >
-                <Stack spacing={8} mx={"auto"} w={"450px"}>
-                    <Stack align={"center"}>
-                        <Heading fontSize={"4xl"}>Create Quiz</Heading>
-                    </Stack>
-                    <Box
-                        rounded={"lg"}
-                        bg={useColorModeValue("white", "gray.700")}
-                        boxShadow={"lg"}
-                        p={8}
-                    >
-                        <Stack spacing={4}>
-                            <FormControl id="title">
-                                <FormLabel>Title</FormLabel>
-                                <Input
-                                    variant={"flushed"}
-                                    color={"gray.500"}
-                                    placeholder={"React Native"}
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                />
-                            </FormControl>
-                            <FormControl id="description">
-                                <FormLabel>Description</FormLabel>
-                                <Textarea
-                                    placeholder="Type something"
-                                    size="md"
-                                    value={description}
-                                    onChange={(e) =>
-                                        setDescription(e.target.value)
-                                    }
-                                />
-                            </FormControl>
-                            <FormControl id="duration">
-                                <FormLabel>Duration</FormLabel>
-                                <Slider
-                                    aria-label="duration"
-                                    defaultValue={duration}
-                                    min={0}
-                                    max={120}
-                                    onChange={(val) => setDuration(val)}
-                                >
-                                    <SliderMark
-                                        value={duration}
-                                        mt="3"
-                                        ml="-2.5"
-                                        fontSize="sm"
-                                    >
-                                        {duration} min
-                                    </SliderMark>
-                                    <SliderTrack bg="red.100">
-                                        <SliderFilledTrack bg="tomato" />
-                                    </SliderTrack>
-                                    <SliderThumb boxSize={6}>
-                                        <Box color="tomato" as={MdGraphicEq} />
-                                    </SliderThumb>
-                                </Slider>
-                            </FormControl>
-                            <FormControl id="scheduledFor">
-                                <FormLabel>Quiz Start Date and Time</FormLabel>
-                                <Input
-                                    variant={"flushed"}
-                                    color={"gray.500"}
-                                    placeholder="Select Quiz Start Date and Time"
-                                    type={"datetime-local"}
-                                    value={scheduledFor}
-                                    onChange={(e) =>
-                                        setScheduledFor(e.target.value)
-                                    }
-                                />
-                            </FormControl>
-                            <FormControl id="endTime">
-                                <FormLabel>Quiz End Date and Time</FormLabel>
-                                <Input
-                                    variant={"flushed"}
-                                    color={"gray.500"}
-                                    placeholder="Select Quiz End Date and Time"
-                                    type={"datetime-local"}
-                                    value={endTime}
-                                    onChange={(e) =>
-                                        setEndTime(e.target.value)
-                                    }
-                                />
-                            </FormControl>
-                            <Stack spacing={10} my={8}>
-                                <Button
-                                    bg={"blue.400"}
-                                    color={"white"}
-                                    leftIcon={<FiEdit3 />}
-                                    isLoading={loading}
-                                    loadingText={"Saving ..."}
-                                    onClick={clickSubmit}
-                                    _hover={{
-                                        bg: "blue.500",
-                                    }}
-                                >
-                                    Create
-                                </Button>
-                            </Stack>
-                            <Alert status="info">
-                                <AlertIcon />
-                                Note That after creating the quiz you add
-                                questions
-                            </Alert>
-                        </Stack>
-                    </Box>
+              <Stack spacing={4}>
+                <FormControl id="title">
+                  <FormLabel>Title</FormLabel>
+                  <Input
+                    variant={"flushed"}
+                    color={"gray.500"}
+                    placeholder={"React Native"}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="description">
+                  <FormLabel>Description</FormLabel>
+                  <Textarea
+                    placeholder="Type something"
+                    size="md"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="duration">
+                  <FormLabel>Duration</FormLabel>
+                  <Slider
+                    aria-label="duration"
+                    defaultValue={duration}
+                    min={0}
+                    max={120}
+                    onChange={(val) => setDuration(val)}
+                  >
+                    <SliderMark value={duration} mt="3" ml="-2.5" fontSize="sm">
+                      {duration} min
+                    </SliderMark>
+                    <SliderTrack bg="red.100">
+                      <SliderFilledTrack bg="tomato" />
+                    </SliderTrack>
+                    <SliderThumb boxSize={6}>
+                      <Box color="tomato" as={MdGraphicEq} />
+                    </SliderThumb>
+                  </Slider>
+                </FormControl>
+                <FormControl id="scheduledFor">
+                  <FormLabel>Quiz Start Date and Time</FormLabel>
+                  <Input
+                    variant={"flushed"}
+                    color={"gray.500"}
+                    placeholder="Select Quiz Start Date and Time"
+                    type={"datetime-local"}
+                    value={scheduledFor}
+                    onChange={(e) => setScheduledFor(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="endTime">
+                  <FormLabel>Quiz End Date and Time</FormLabel>
+                  <Input
+                    variant={"flushed"}
+                    color={"gray.500"}
+                    placeholder="Select Quiz End Date and Time"
+                    type={"datetime-local"}
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                  />
+                </FormControl>
+                <Stack spacing={10} my={8}>
+                  <Button
+                    bg="#00237c"
+                    color={"white"}
+                    leftIcon={<FiEdit3 />}
+                    isLoading={loading}
+                    loadingText={"Saving ..."}
+                    onClick={clickSubmit}
+                    _hover={{
+                      bg: "blue.700",
+                    }}
+                  >
+                    Create
+                  </Button>
                 </Stack>
-            </Flex>
-        </Box>
+                <Alert status="info">
+                  <AlertIcon />
+                  Note That after creating the quiz you add questions
+                </Alert>
+              </Stack>
+            </Box>
+          </Stack>
+        </Flex>
+      </Box>
     );
 }
 
