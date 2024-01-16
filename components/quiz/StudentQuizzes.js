@@ -17,6 +17,7 @@ import { startQuiz } from "../../services/quiz";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { useSession } from "next-auth/react";
 import Countdown from "../Countdown";
+import screenfull from 'screenfull';
 
 const StudentQuizzes = ({ quizzes }) => {
     const { data: session } = useSession();
@@ -51,6 +52,17 @@ const QuizItem = ({ quiz, user }) => {
 
 
     const start = () => {
+        if (screenfull.isEnabled) {
+            screenfull.request().catch((err) => {
+                toast({
+                    title: "Error",
+                    description: "Could not enter fullscreen mode",
+                    status: "error",
+                    duration: 9000,
+                    isClosable: true,
+                });
+            });
+        }
         startQuiz(quiz._id, user.id)
             .then((data) => {
                 if (data?.error) {

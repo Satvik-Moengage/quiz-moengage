@@ -23,6 +23,7 @@ async function createQuestion(req, res) {
 
     const db = new MongoDbClient();
     await db.initClient();
+    console.log(type);
     
     try {
       let newQuestion;
@@ -37,6 +38,15 @@ async function createQuestion(req, res) {
             type,
           });
           break;
+
+          case 'Reorder':
+            newQuestion = new Question({
+              quizId,
+              description,
+              options,
+              type,
+            });
+            break;
 
           case 'MCM':
           newQuestion = new Question({

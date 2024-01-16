@@ -1,17 +1,18 @@
 import {
-    Accordion,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    Heading,
-    IconButton,
-    Flex,
-    Box,
-    Icon,
-    Tooltip,
-    HStack,
-    Stack,
-    Text
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  Heading,
+  IconButton,
+  Flex,
+  Box,
+  Icon,
+  Tooltip,
+  HStack,
+  Stack,
+  Text,
+  Image
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -32,11 +33,14 @@ const validateUser = (currentUserId, authorUserId) =>
 const Questions = ({ quiz }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const[questions, setQuestions] = useState(quiz?.questions)
-  
+  const [questions, setQuestions] = useState(quiz?.questions)
+
   useEffect(() => {
     setQuestions(quiz?.questions);
-}, [quiz?.questions]);
+    quiz?.questions.forEach(question => {
+      console.log(question);
+    });
+  }, [quiz?.questions]);
 
   const handleDelete = async (questionId) => {
     await axios.delete(`/api/question/updating/${questionId}`);
@@ -51,7 +55,7 @@ const Questions = ({ quiz }) => {
       )
     );
   };
-  
+
   return (
     <Card>
       <Flex justify={'space-between'} mb={3}>
@@ -97,7 +101,7 @@ const Questions = ({ quiz }) => {
   );
 };
 
-const QuestionItem = ({ question, isBtnDisabled,handleDelete, handleUpdate}) => {
+const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) => {
   // const handleDelete = async () => {
   //   await axios.delete(`/api/question/updating/${question?._id}`);
   // };
@@ -168,19 +172,56 @@ const QuestionItem = ({ question, isBtnDisabled,handleDelete, handleUpdate}) => 
               </HStack>
             </AccordionButton>
           </Heading>
-          <AccordionPanel pb={4}>
-            {question?.options?.map((opt, i) => (
-              <OptionItem
-                key={i}
-                color={
-                  question?.correctAnswer.includes(opt)
-                    ? 'green'
-                    : 'gray.800'
-                }
-                text={opt}
+          {['MCQ', 'MCM', 'True/False'].includes(question?.type) && (
+            <AccordionPanel pb={4}>
+              {question?.options?.map((opt, i) => (
+                <OptionItem
+                  key={i}
+                  color={
+                    question?.correctAnswer.includes(opt)
+                      ? 'green'
+                      : 'gray.800'
+                  }
+                  text={opt}
+                />
+              ))}
+            </AccordionPanel>
+          )}
+          {question?.type === 'Reorder' && (
+            <AccordionPanel pb={4}>
+              <p>Correct order</p>
+              {question?.options?.map((opt, i) => (
+                <OptionItem
+                  key={i}
+                  color={
+                    question?.options.includes(opt)
+                      ? 'green'
+                      : 'gray.800'
+                  }
+                  text={opt}
+                />
+              ))}
+            </AccordionPanel>
+          )}
+          {question?.type === 'Hotspot' && (
+            <AccordionPanel pb={4}>
+            <p>Marked Area</p>
+            <div style={{ position: 'relative' }}>
+              <Image src={question?.imageUrl} style={{width:'200%'}}/>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: `${question.correctAnswer.top}px`,
+                  left: `${question.correctAnswer.left}px`,
+                  width: `${question.correctAnswer.width}px`,
+                  height: `${question.correctAnswer.height}px`,
+                  border: '2px solid red',  // Or any other indication you want for the box
+                  boxSizing: 'border-box'
+                }}
               />
-            ))}
+            </div>
           </AccordionPanel>
+          )}
         </>
       )}
     </AccordionItem>
