@@ -12,6 +12,8 @@ import {
     Radio,
     useColorModeValue,
     useToast,
+    Checkbox,
+    CheckboxGroup
 } from "@chakra-ui/react";
 import { Icon } from '@chakra-ui/react';
 import Countdown from "../components/Countdown";
@@ -37,14 +39,14 @@ export default function Quiz() {
 
     const [allQuestions, setAllQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [currentAns, setCurrentAns] = useState(null);
+    const [currentAns, setCurrentAns] = useState(allQuestions[currentQuestion]?.type === "MCM" ? [] : '');
     const [currentStep, setCurrentStep] = useState(1);
     const [allAns, setAllAns] = useState(null);
     const [loading, setLoading] = useState(true);
     const [totalDuration, setTotalDuration] = useState(0);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
-    const [marker, setMarker] = useState({ top: null, left: null});
+    const [marker, setMarker] = useState({ top: null, left: null });
     const [dragging, setDragging] = useState(false);
 
     const { data } = useSWR(`/api/quiz/student?quizId=${quizId}`, fetcher);
@@ -93,31 +95,42 @@ export default function Quiz() {
 
     // Save the answers on click next or prev
 
-    const handleChange = (event) => {
-        setCurrentAns(event);
+    const handleChange = (newValue) => {
+        let newState = [...allAns];
+        newState[currentQuestion].selectedOption = newValue;
 
-        let newState = allAns;
-        newState[currentQuestion].selectedOption = event;
         setAllAns(newState);
+        setCurrentAns(newValue);
+    };
+    const handleMCMChange = (selectedValues) => {
+        console.log(selectedValues); 
+    
+        const newState = [...allAns];
+        newState[currentQuestion].selectedOption = selectedValues;
+    
+        setAllAns(newState);
+        setCurrentAns(selectedValues);
     };
     /**
      * Submit the quiz to the backend
      */
-
     const clickSubmit = () => {
-        let submitData = {
-            questions: allAns,
-        };
+        let submitData = allAns.map(ans => {
+            if (Array.isArray(ans.selectedOption)) {
+                return { ...ans, selectedOption: ans.selectedOption.join(',') };
+            }
+            return ans;
+        });
+
         submitQuiz(
             { quizId: quizId, userId: session?.user?.id },
-            submitData
+            { questions: submitData }
         ).then((data) => {
             router.replace(
                 { pathname: "/results", query: { attemptId: data.attemptId } },
                 "/results"
-            )
-        }
-        );
+            );
+        });
     };
 
     /**
@@ -163,11 +176,19 @@ export default function Quiz() {
                     type: ques?.type
                 };
             }
+
             else if (ques.type === "Hotspot") {
                 questObj = {
                     text: ques?.description,
                     options: ques?.options,
                     imageUrl: ques?.imageUrl,
+                    type: ques?.type
+                };
+            }
+            else if (ques.type === "MCM") {
+                questObj = {
+                    text: ques?.description,
+                    options: ques?.options,
                     type: ques?.type
                 };
             }
@@ -261,7 +282,7 @@ export default function Quiz() {
                             <Text size={"md"} mb={3}>
                                 {allQuestions[currentQuestion]?.text}
                             </Text>
-                            {allQuestions[currentQuestion]?.type === "Hotspot" && (
+                            {/* {allQuestions[currentQuestion]?.type === "Hotspot" && (
                             <>
                                 <Box position="relative"> 
                                 <Image
@@ -290,25 +311,50 @@ export default function Quiz() {
                                     </Icon>
                                 }
                                 </Box>
-                            </>)}
-                            <Text size={"md"} mb={3}>
-                                {allQuestions[currentQuestion]?.correctAnswer}
-                            </Text>
-
-                            <RadioGroup
-                                onChange={handleChange}
-                                value={currentAns}
+                            </>)} */}
+                            {allQuestions[currentQuestion]?.type === "MCQ" && (
+                                <RadioGroup onChange={handleChange} value={currentAns}>
+                                    <Stack direction="column" spacing={4}>
+                                        {allQuestions[currentQuestion]?.options.map((opt, i) => (
+                                            <Radio value={opt} key={i}>{opt}</Radio>
+                                        ))}
+                                    </Stack>
+                                </RadioGroup>
+                            )}
+                            {allQuestions[currentQuestion]?.type === "MCM" && (
+                                <CheckboxGroup
+                                value={currentAns || []} 
+                                onChange={handleMCMChange}
                             >
-                                <Stack spacing={4} direction={"column"}>
-                                    {allQuestions[currentQuestion]?.options.map(
-                                        (opt, i) => (
-                                            <Radio value={opt} key={opt}>
-                                                {opt}
-                                            </Radio>
-                                        )
-                                    )}
+                                <Stack direction="column" spacing={4}>
+                                    {allQuestions[currentQuestion]?.options.map((opt, i) => (
+                                        <Checkbox value={opt} key={i}>{opt}</Checkbox>
+                                    ))}
                                 </Stack>
-                            </RadioGroup>
+                            </CheckboxGroup>
+                            )}
+                            {allQuestions[currentQuestion]?.type === "True/False" && (
+                                <>
+                                    <Text size={"md"} mb={3}>
+                                        {allQuestions[currentQuestion]?.correctAnswer}
+                                    </Text>
+
+                                    <RadioGroup
+                                        onChange={handleChange}
+                                        value={currentAns}
+                                    >
+                                        <Stack spacing={4} direction={"column"}>
+                                            {allQuestions[currentQuestion]?.options.map(
+                                                (opt, i) => (
+                                                    <Radio value={opt} key={opt}>
+                                                        {opt}
+                                                    </Radio>
+                                                )
+                                            )}
+                                        </Stack>
+                                    </RadioGroup>
+                                </>)}
+
                             <Stack spacing={10} direction={"row"} mt={5}>
                                 {prevBtn()}
                                 {nextBtn()}
