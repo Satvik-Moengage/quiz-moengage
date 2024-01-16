@@ -15,7 +15,6 @@ import {
     Checkbox,
     CheckboxGroup
 } from "@chakra-ui/react";
-import { Icon } from '@chakra-ui/react';
 import Countdown from "../components/Countdown";
 import Layout from "../components/Layout";
 import ConfirmDialog from "../components/common/ConfirmDialog";
@@ -26,7 +25,6 @@ import axios from "axios";
 import useSWR from "swr";
 import { submitQuiz, resetQuiz } from "../services/quiz";
 import Head from "next/head"
-import { Image } from "@chakra-ui/image";
 
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
@@ -48,6 +46,81 @@ export default function Quiz() {
     const [showResetModal, setShowResetModal] = useState(false);
     const [marker, setMarker] = useState({ top: null, left: null });
     const [dragging, setDragging] = useState(false);
+    const [fullscreenWarnings, setFullscreenWarnings] = useState(0);
+
+    function launchFullScreen(element) {
+        if (element?.requestFullscreen) {
+            element.requestFullscreen().catch((error) => {
+                console.error('Fullscreen mode failed to launch:', error);
+            });
+        } else if (element?.mozRequestFullScreen) {
+            element.mozRequestFullScreen().catch((error) => {
+                console.error('Fullscreen mode failed to launch:', error);
+            });
+        } else if (element?.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen().catch((error) => {
+                console.error('Fullscreen mode failed to launch:', error);
+            });
+        } else if (element?.msRequestFullscreen) {
+            element.msRequestFullscreen().catch((error) => {
+                console.error('Fullscreen mode failed to launch:', error);
+            });
+        }
+    }
+    useEffect(() => {
+        const fullscreenCheckInterval = setInterval(() => {
+
+            if (!document.fullscreenElement) {
+                setFullscreenWarnings(warnings => warnings + 1);
+
+                toast({
+                    title: "Warning",
+                    description: "Please remain in fullscreen mode.",
+                    status: "warning",
+                    duration: 5000,
+                    isClosable: true,
+                });
+
+                launchFullScreen(document.documentElement);
+
+                if (fullscreenWarnings >= 2) {
+                    console.log(`User has received ${fullscreenWarnings + 1} warnings about staying in fullscreen.`);
+                    // Add functionality to end quiz
+                }
+            }
+        }, 5000);
+
+        return () => clearInterval(fullscreenCheckInterval);
+    }, [toast, fullscreenWarnings]);
+
+    useEffect(() => {
+        const preventReload = (event) => {
+            event.preventDefault();
+            event.returnValue = 'Reloading the quiz would submit the quiz';
+            return event.returnValue;
+        };
+
+        const handleKeyDown = (event) => {
+            if ((event.key === 'F5') || (event.ctrlKey && event.key === 'r' || (event.metaKey && event.key === 'r'))) {
+                event.preventDefault();
+                toast({
+                    title: "Warning",
+                    description: "Reloading the quiz would result in quiz submission",
+                    status: "warning",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+        };
+
+        window.addEventListener('beforeunload', preventReload);
+        window.addEventListener('keydown', handleKeyDown); 
+
+        return () => {
+            window.removeEventListener('beforeunload', preventReload);
+            window.removeEventListener('keydown', handleKeyDown); 
+        };
+    }, [toast]);
 
     const { data } = useSWR(`/api/quiz/student?quizId=${quizId}`, fetcher);
 
@@ -103,11 +176,11 @@ export default function Quiz() {
         setCurrentAns(newValue);
     };
     const handleMCMChange = (selectedValues) => {
-        console.log(selectedValues); 
-    
+        console.log(selectedValues);
+
         const newState = [...allAns];
         newState[currentQuestion].selectedOption = selectedValues;
-    
+
         setAllAns(newState);
         setCurrentAns(selectedValues);
     };
@@ -323,15 +396,15 @@ export default function Quiz() {
                             )}
                             {allQuestions[currentQuestion]?.type === "MCM" && (
                                 <CheckboxGroup
-                                value={currentAns || []} 
-                                onChange={handleMCMChange}
-                            >
-                                <Stack direction="column" spacing={4}>
-                                    {allQuestions[currentQuestion]?.options.map((opt, i) => (
-                                        <Checkbox value={opt} key={i}>{opt}</Checkbox>
-                                    ))}
-                                </Stack>
-                            </CheckboxGroup>
+                                    value={currentAns || []}
+                                    onChange={handleMCMChange}
+                                >
+                                    <Stack direction="column" spacing={4}>
+                                        {allQuestions[currentQuestion]?.options.map((opt, i) => (
+                                            <Checkbox value={opt} key={i}>{opt}</Checkbox>
+                                        ))}
+                                    </Stack>
+                                </CheckboxGroup>
                             )}
                             {allQuestions[currentQuestion]?.type === "True/False" && (
                                 <>
@@ -398,7 +471,7 @@ const QuizBtn = ({ text, onClick }) => (
 
 Quiz.getLayout = function getLayout(page) {
     return (
-        <Layout>
+        <Layout showAppBar={false}>
             {page}
         </Layout>
     )

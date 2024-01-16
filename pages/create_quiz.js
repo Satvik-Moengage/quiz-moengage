@@ -31,6 +31,7 @@ export default function CreateQuiz() {
     const router = useRouter();
     const toast = useToast();
     const [duration, setDuration] = useState(10);
+    const [passingMarks, setPassingMarks] = useState(85);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [scheduledFor, setScheduledFor] = useState(new Date());
@@ -41,6 +42,7 @@ export default function CreateQuiz() {
     const { data: session } = useSession();
 
     const clickSubmit = async () => {
+      console.log(passingMarks)
         setLoading(true);
         const quiz = {
             title: title,
@@ -49,6 +51,7 @@ export default function CreateQuiz() {
             authorId: session.user.id,
             scheduledFor: scheduledFor,
             endTime: endTime,
+            passingMarks: passingMarks
         };
 
         const resetForm = () => {
@@ -171,6 +174,17 @@ export default function CreateQuiz() {
                     type={"datetime-local"}
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="passing marks">
+                  <FormLabel>Passing %</FormLabel>
+                  <Input
+                    variant={"flushed"}
+                    color={"gray.500"}
+                    placeholder="Select Quiz Passing Marks"
+                    type={"number"}
+                    value={passingMarks}
+                    onChange={(e) => setPassingMarks(e.target.value)}
                   />
                 </FormControl>
                 <Stack spacing={10} my={8}>

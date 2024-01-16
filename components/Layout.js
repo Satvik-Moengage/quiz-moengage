@@ -1,10 +1,10 @@
 import Navbar from "./Navbar";
 // import Appbar from "./common/Appbar"
 
-export default function Layout({ children }) {
+export default function Layout({ children, showAppBar = true }) {
     return (
         <>
-            <Navbar />
+            {showAppBar && <Navbar />}
             <main>{children}</main>
         </>
     );

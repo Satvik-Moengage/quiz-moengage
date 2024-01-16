@@ -39,7 +39,10 @@ async function createQuiz(req, res) {
             authorId,
             scheduledFor,
             endTime,
+            passingMarks
         } = req.body;
+
+        console.log(req.body);
 
 
         const newQuiz = new QuizSchema({
@@ -50,7 +53,8 @@ async function createQuiz(req, res) {
             usersEnrolled: [],
             createdAt: Date.now(),
             scheduledFor: scheduledFor,
-            endTime: endTime
+            endTime: endTime,
+            passingMarks:passingMarks
         });
 
         await newQuiz.save();
