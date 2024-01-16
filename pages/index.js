@@ -16,42 +16,26 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <Box mx="auto" h={"100vh"} bg={"#1a202c"}>
+    <Box
+      mx="auto"
+      h="100vh"
+      bg="#1a202c"
+      display="flex"
+      justifyContent="center"
+    >
       <Head>
         <title>Quiz Platform | Home</title>
       </Head>
       <SimpleGrid
-        columns={{ base: 1, md: 2 }}
+        columns={{ base: 1, md: 1 }} // Set to 1 column for all sizes
         spacing={0}
-        _after={{
-          opacity: 0.25,
-          pos: "absolute",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          zIndex: -1,
-          content: '" "',
-        }}
-        bg={"#1a202c"}
+        w={{ base: "full", md: "50%" }} // Set the width to be full on base and 50% on medium screens
+        minChildWidth="320px" // Make sure the grid never gets too small for the content
+        placeItems="center" // Center items both horizontally and vertically in the grid cell
+        bg="#1a202c"
       >
-        <Box>
-          <Image
-            //src="https://static.vecteezy.com/system/resources/previews/001/993/315/original/online-test-and-exam-with-people-filling-answer-vector.jpg"
-            src="https://cdn-clalk.nitrocdn.com/KqmKVeLhgFAzHWrUbBzmAbRgoFMrOqoq/assets/images/optimized/rev-b569cbb/www.moengage.com/wp-content/uploads/3.-Carousel-of-leadership-quotes_Yashwanth-K-_Yashwanth-K--768x768.png"
-            //src="https://martechseries.com/wp-content/uploads/2022/03/Forbes-Names-MoEngage-One-of-Americas-Best-Startup-Employers.jpg"
-            alt="quiz"
-            fit="cover"
-            h={"99vh"}
-            bg="gray.100"
-            loading="lazy"
-          />
-        </Box>
-        <Box
-          textAlign="center"
-          w={{ base: "full", md: 11 / 12, xl: 8 / 12 }}
-          m="auto"
-        >
+      
+        <Box textAlign="center" w={{ base: "full", md: 11 / 12, xl: 8 / 12 }}>
           <chakra.h1
             fontSize={{ base: "4xl", sm: "5xl", md: "6xl" }}
             letterSpacing="tight"

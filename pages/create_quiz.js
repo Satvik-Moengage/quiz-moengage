@@ -106,7 +106,7 @@ export default function CreateQuiz() {
         >
           <Stack spacing={8} mx={"auto"} w={"450px"}>
             <Stack align={"center"}>
-              <Heading fontSize={"4xl"}>Create Quiz</Heading>
+              <Heading fontSize={"4xl"}>Create New Quiz</Heading>
             </Stack>
             <Box
               rounded={"lg"}
