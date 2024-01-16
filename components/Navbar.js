@@ -59,7 +59,7 @@ export default function Navbar() {
       >
         <Flex alignItems="center" justifyContent="space-between" mx="auto">
           <HStack spacing={4} display="flex" alignItems="center">
-            <Box display={{ base: "inline-flex", md: "none" }}>
+            <Box display={{ base: "inline-flex", md: "none" }} >
               <IconButton
                 display={{ base: "flex", md: "none" }}
                 aria-label="Open menu"
@@ -158,6 +158,7 @@ export default function Navbar() {
                     _focus={{ boxShadow: "none" }}
                     onClick={() => router.replace("/create_quiz")}
                   >
+                    
                     Create Quiz
                   </Tab>
                   <Tab
@@ -175,10 +176,10 @@ export default function Navbar() {
           <Spacer />
           <HStack spacing={3} alignItems="center">
             <InputGroup display={{ base: "none", lg: "block" }} ml="auto">
-              <InputLeftElement pointerEvents="none">
+              {/* <InputLeftElement pointerEvents="none">
                 <AiOutlineSearch />
-              </InputLeftElement>
-              <Input type="tel" placeholder="Search Quiz..." />
+              </InputLeftElement> */}
+              <Input type="tel" placeholder="Search Quiz" bg="fff" color="black"/>
             </InputGroup>
           </HStack>
         </Flex>

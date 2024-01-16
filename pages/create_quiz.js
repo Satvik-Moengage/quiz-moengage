@@ -188,14 +188,14 @@ export default function CreateQuiz() {
                             </FormControl>
                             <Stack spacing={10} my={8}>
                                 <Button
-                                    bg={"blue.400"}
+                                    bg="#00237c"
                                     color={"white"}
                                     leftIcon={<FiEdit3 />}
                                     isLoading={loading}
                                     loadingText={"Saving ..."}
                                     onClick={clickSubmit}
                                     _hover={{
-                                        bg: "blue.500",
+                                        bg: "blue.700",
                                     }}
                                 >
                                     Create

@@ -17,7 +17,9 @@ import {
     InputRightElement,
     Icon,
     IconButton,
+    Image,
     useToast,
+    Center,
 } from "@chakra-ui/react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { HiOutlineMail } from "react-icons/hi";
@@ -88,17 +90,30 @@ export default function Login() {
             </Head>
             <Stack spacing={8} mx={"auto"} w={"450px"}>
                 <Stack align={"center"}>
-                    <Heading fontSize={"4xl"}>Welcome Back</Heading>
+                    <Image src="/moe-bluelogo.png" alt="Header Image" />
+                    {/* <Heading fontSize={"4xl"}>Welcome Back</Heading>
                     <Text fontSize={"lg"} color={"gray.600"}>
-                        Signin to your account
-                    </Text>
+                        Sign In to your account
+                    </Text> */}
+                    
                 </Stack>
+                
                 <Box
+                
                     rounded={"lg"}
                     bg={useColorModeValue("white", "gray.700")}
                     boxShadow={"lg"}
                     p={8}
+                    borderColor="#00237c"
+  borderWidth={8}
+                    
                 >
+                    <Flex justify="center" align="center">
+                    <Heading fontSize={"lg"} bg="#00237c" color="#ffffff" padding={4} borderRadius="4px" width={['100%']} fontFamily={"Poppins"} textAlign="center">Welcome Back !
+                    </Heading>
+                    </Flex>
+
+                    <br></br>
                     <Stack spacing={4}>
                         <FormControl id="email">
                             <FormLabel>Email address</FormLabel>
@@ -153,23 +168,27 @@ export default function Login() {
                                 justify={"space-between"}
                             >
                                 <Checkbox>Remember me</Checkbox>
-                                <Link color={"blue.400"}>Forgot password?</Link>
+                                <Link color={"blue.700"}>Forgot password?</Link>
                             </Stack>
+                            <Flex justify="center" align="center">
                             <Button
-                                bg={"blue.400"}
+                                bg="#00237c"
                                 color={"white"}
                                 leftIcon={<RiLoginCircleFill />}
                                 isLoading={loading}
                                 loadingText={"Authenticating ..."}
                                 onClick={clickSubmit}
                                 _hover={{
-                                    bg: "blue.500",
+                                    bg: "#00237c",
                                 }}
+                                width={200}
+                                display="block"
                             >
                                 Sign in
                             </Button>
+                            </Flex>
                             <Link
-                                color={"blue.400"}
+                                color={"blue.700"}
                                 onClick={() => router.push("/register")}
                             >
                                 {" "}

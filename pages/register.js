@@ -18,6 +18,7 @@ import {
     RadioGroup,
     Radio,
     Link,
+    Image,
     useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -87,17 +88,26 @@ export default function Register() {
             </Head>
             <Stack spacing={8} mx={"auto"} w={"600px"}>
                 <Stack align={"center"}>
-                    <Heading fontSize={"4xl"}>Get Started with Quiz</Heading>
+                <Image src="/moe-bluelogo.png" alt="Header Image" maxWidth={400} maxHeight={400} style={{ marginTop: '50px' }} />
+                    {/* <Heading fontSize={"4xl"}>Get Started with Quiz</Heading>
                     <Text fontSize={"lg"} color={"gray.600"}>
                         Create an account
-                    </Text>
+                    </Text> */}
                 </Stack>
                 <Box
                     rounded={"lg"}
                     bg={useColorModeValue("white", "gray.700")}
                     boxShadow={"lg"}
                     p={8}
+                    borderColor="#00237c"
+                    borderWidth={8}
                 >
+                    <Flex justify="center" align="center">
+                    <Heading fontSize={"lg"} bg="#00237c" color="#ffffff" padding={4} borderRadius="4px" width={['100%']} fontFamily={"Poppins"} textAlign="center">Create an Account
+                    </Heading>
+                    </Flex>
+
+                    <br></br>
                     <Stack spacing={4}>
                         <FormControl id="name">
                             <FormLabel>Name</FormLabel>
@@ -197,8 +207,8 @@ export default function Register() {
                             <RadioGroup value={role} onChange={setRole}>
                                 <Stack spacing={5} direction="row">
                                     <Radio
-                                        colorScheme="teal"
-                                        color={"gray.500"}
+                                        // colorScheme="teal"
+                                        color="#00237c"
                                         value="Administrator"
                                     >
                                         <Text
@@ -209,8 +219,8 @@ export default function Register() {
                                         </Text>
                                     </Radio>
                                     <Radio
-                                        colorScheme="teal"
-                                        color={"gray.500"}
+                                        // colorScheme="teal"
+                                        color="#00237c"
                                         value="Student"
                                     >
                                         <Text
@@ -223,8 +233,9 @@ export default function Register() {
                                 </Stack>
                             </RadioGroup>
                         </FormControl>
+                        <Flex justify="center" align="center">
                         <Button
-                            bg={"blue.400"}
+                            bg="#00237c"
                             color={"white"}
                             isLoading={loading}
                             loadingText={"Saving your info ..."}
@@ -232,13 +243,16 @@ export default function Register() {
                             mt={10}
                             leftIcon={<RiLoginCircleFill />}
                             _hover={{
-                                bg: "blue.500",
+                                bg: "#00237c",
                             }}
+                            width={200}
+                            display="block"
                         >
                             Sign up
                         </Button>
+                        </Flex>
                         <Link
-                            color={"blue.400"}
+                            color="#00237c"
                             onClick={() => router.push("/login")}
                         >
                             {" "}
