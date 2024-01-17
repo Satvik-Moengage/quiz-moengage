@@ -23,7 +23,6 @@ async function createQuestion(req, res) {
 
     const db = new MongoDbClient();
     await db.initClient();
-    console.log(type);
     
     try {
       let newQuestion;

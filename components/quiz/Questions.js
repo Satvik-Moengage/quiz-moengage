@@ -38,7 +38,6 @@ const Questions = ({ quiz }) => {
   useEffect(() => {
     setQuestions(quiz?.questions);
     quiz?.questions.forEach(question => {
-      console.log(question);
     });
   }, [quiz?.questions]);
 
@@ -207,7 +206,7 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
             <AccordionPanel pb={4}>
             <p>Marked Area</p>
             <div style={{ position: 'relative' }}>
-              <Image src={question?.imageUrl} style={{width:'200%'}}/>
+              <Image src={question?.imageUrl} style={{width:'750px',height:'500px'}}/>
               <div
                 style={{
                   position: 'absolute',

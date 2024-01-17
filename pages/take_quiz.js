@@ -13,7 +13,8 @@ import {
     useColorModeValue,
     useToast,
     Checkbox,
-    CheckboxGroup
+    CheckboxGroup,
+    Image
 } from "@chakra-ui/react";
 import Countdown from "../components/Countdown";
 import Layout from "../components/Layout";
@@ -176,8 +177,6 @@ export default function Quiz() {
         setCurrentAns(newValue);
     };
     const handleMCMChange = (selectedValues) => {
-        console.log(selectedValues);
-
         const newState = [...allAns];
         newState[currentQuestion].selectedOption = selectedValues;
 
@@ -426,6 +425,10 @@ export default function Quiz() {
                                             )}
                                         </Stack>
                                     </RadioGroup>
+                                </>)}
+                            {allQuestions[currentQuestion]?.type === "Hotspot" && (
+                                <>
+                                    <Image src={allQuestions[currentQuestion]?.imageUrl} style={{width: '750px' ,height:'500px'}}/>
                                 </>)}
 
                             <Stack spacing={10} direction={"row"} mt={5}>

@@ -42,8 +42,6 @@ async function createQuiz(req, res) {
             passingMarks
         } = req.body;
 
-        console.log(req.body);
-
 
         const newQuiz = new QuizSchema({
             title: title,

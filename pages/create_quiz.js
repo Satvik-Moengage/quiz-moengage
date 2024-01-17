@@ -42,7 +42,6 @@ export default function CreateQuiz() {
     const { data: session } = useSession();
 
     const clickSubmit = async () => {
-      console.log(passingMarks)
         setLoading(true);
         const quiz = {
             title: title,

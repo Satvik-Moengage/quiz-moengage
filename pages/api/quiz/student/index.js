@@ -10,13 +10,11 @@ export default async function handler(req, res) {
 }
 
 async function getCachedQuiz(req, res) {
-    const session = await getSession({ req }); //using the current user session to get the userId(entityId)
+    const session = await getSession({ req }); 
     const {quizId} = req.query
-    console.log(quizId)
     const db = new MongoDbClient();
     await db.initClient();
 
-    // Now retrieve the questions from user document
     let user = await UserSchema.findById(session.user.id);
     const quiz = await QuizSchema.findById(quizId);
     const questions = quiz.questions;
