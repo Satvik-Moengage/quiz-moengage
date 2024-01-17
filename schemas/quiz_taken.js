@@ -1,15 +1,10 @@
-import { Schema } from "mongoose";
-import mongoose from "mongoose";
+import { Schema, model, models } from 'mongoose';
+import { default as AttemptSchema } from './attempt'; // Use default import
 
-
-const QuizTaken = new Schema({
-    userId: { type: String },
-    userName: { type: String }, // name of the user taking the quiz
-    score: { type: Number },
-    responses: { type: [String] },
+const QuizTakenSchema = new Schema({
     quizId: { type: String },
-    attemptId: { type: String },
-    quizTitle: { type: String }
+    quizTitle: { type: String },
+    attempts: { type: [AttemptSchema] } // Array of Attempt subdocuments
 });
 
-export default mongoose.models.QuizTaken || mongoose.model('QuizTaken', QuizTaken);
+export const QuizTaken = models.QuizTaken || model('QuizTaken', QuizTakenSchema);

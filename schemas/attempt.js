@@ -1,9 +1,8 @@
-import { Schema } from "mongoose";
-import mongoose from "mongoose";
+import { Schema, model, models } from 'mongoose';
 
-const Attempt = new Schema({
-    quizId: { type: String },
-    userId: { type: String }
+const AttemptSchema = new Schema({
+    score: { type: Number },
+    responses: [{ type: Schema.Types.ObjectId, ref: 'Response' }] // Reference to Response model
 });
 
-export default mongoose.models.Attempt || mongoose.model('Attempt', Attempt);
+export const Attempt = models.Attempt || model('Attempt', AttemptSchema);

@@ -199,7 +199,7 @@ export default function Quiz() {
             { questions: submitData }
         ).then((data) => {
             router.replace(
-                { pathname: "/results", query: { attemptId: data.attemptId } },
+                { pathname: "/results"},
                 "/results"
             );
         });
