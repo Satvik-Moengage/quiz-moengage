@@ -26,13 +26,38 @@ import {
 import useSWR from "swr";
 import axios from "axios";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export default function Results() {
-    const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const { data: session } = useSession();
+    const [loading, setLoading] = useState(true);
+    const [userDetails, setUserDetails] = useState(null);
+    const userId= session?.user?.id
+
+    const fetchUserDetails = async (userId) => {
+        try {
+            const response = await fetch(`/api/user/details/${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setUserDetails(data);
+            } else {
+                console.error('Failed to fetch user details', response);
+            }
+        } catch (error) {
+            console.error('Error fetching user details', error);
+        }
+    };
+
+    useEffect(() => {
+        if (userId) {
+            fetchUserDetails(userId);
+        }
+    }, [userId]);
     const { attemptId } = router.query;
+    const {quizTakenId} = router.query
     const { data: attemptInfo } = useSWR(
         () => `/api/quiz/attempt/${attemptId}`,
         fetcher
@@ -43,6 +68,8 @@ export default function Results() {
         }
     }, [attemptInfo]);
 
+    const quizTaken = userDetails?.quizzesTaken?.find(item => item._id === quizTakenId)
+    console.log(quizTaken, " ", quizTakenId)
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>
@@ -60,7 +87,7 @@ export default function Results() {
                         >
                             <Flex alignItems={"center"}>
                                 <Text fontSize={"xl"}>
-                                    {attemptInfo?.quizTitle}
+                                    {quizTaken?.quizTitle}
                                 </Text>
                             </Flex>
                             <Text fontSize={"md"}>

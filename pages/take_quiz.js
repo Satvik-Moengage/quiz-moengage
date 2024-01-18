@@ -213,7 +213,8 @@ export default function Quiz() {
             { questions: submitData }
         ).then((data) => {
             router.replace(
-                { pathname: "/results" },
+                { pathname: "/results",
+                query:{ attemptId: data.attemptId, quizTakenId : data.quizTakenId } },
                 "/results"
             );
         });

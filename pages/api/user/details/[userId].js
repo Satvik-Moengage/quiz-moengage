@@ -12,6 +12,8 @@ async function getUserDetail(req, res) {
     const db = new MongoDbClient();
     await db.initClient();
     const { userId } = req.query;
+    console.log(userId)
+
     try {
         const user = await UserSchema.findById(userId);
         return res.status(200).json({

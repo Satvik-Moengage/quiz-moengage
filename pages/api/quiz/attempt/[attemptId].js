@@ -1,5 +1,7 @@
 import MongoDbClient from "../../../../utils/mongo_client";
 import { QuizTakenSchema, ResponseSchema } from "../../../../schemas";
+import { QuizTaken } from "../../../../schemas/quiz_taken";
+import { Attempt } from "../../../../schemas/attempt";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -15,19 +17,21 @@ async function getResponses(req, res) {
     const { attemptId } = req.query;
     
     try {
-        let quizTaken = await QuizTakenSchema
-            .findOne({ "attemptId": attemptId });
-        quizTaken = quizTaken.toJSON();
+        let attempt = await Attempt
+            .findById(attemptId);
+        attempt = attempt.toJSON();
+
+        const responseIds = attempt.responses 
 
         let attemptInfo = new Object();
-        attemptInfo.score = quizTaken.score;
-        attemptInfo.userId = quizTaken.userId;
-        attemptInfo.quizId = quizTaken.quizId;
-        attemptInfo.attemptId = quizTaken.attemptId;
-        attemptInfo.quizTitle = quizTaken.quizTitle;
+        attemptInfo.score = attempt.score;
+        attemptInfo.attemptId = attempt._id
 
-        let responses = await ResponseSchema
-            .find({ "attemptId": attemptId });
+        let responses = await ResponseSchema.find({
+            _id: {
+                $in: responseIds
+            }
+        });
 
         responses = responses.map((item) => item.toJSON());
         attemptInfo.responses = responses;

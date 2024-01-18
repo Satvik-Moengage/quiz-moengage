@@ -116,7 +116,7 @@ export const submitQuiz = async (params, quizData) => {
         }
         console.log(quizData)
         let resp = await axios.post(`${BASE_URL}/quiz/start/${params.quizId}/${params.userId}`, quizData, config)
-        console.log(resp)
+        console.log(resp.data)
 
         return resp.data
 

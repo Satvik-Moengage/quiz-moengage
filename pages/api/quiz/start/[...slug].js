@@ -245,9 +245,11 @@ async function markQuiz(req, res) {
 
         // Save the updated User
         await user.save();
-
+        const quiz_taken = user.quizzesTaken.find(qt => String(qt.quizId) === String(quizId))
         return res.status(200).json({
             message: "Quiz Submitted Successfully!",
+            attemptId: newAttempt._id,
+            quizTakenId: quiz_taken._id
         });
     
     } catch (err) {
