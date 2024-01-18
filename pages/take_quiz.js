@@ -27,7 +27,6 @@ import useSWR from "swr";
 import { submitQuiz, resetQuiz } from "../services/quiz";
 import Head from "next/head"
 
-
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export default function Quiz() {
@@ -45,7 +44,7 @@ export default function Quiz() {
     const [totalDuration, setTotalDuration] = useState(0);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
-    const [marker, setMarker] = useState({ top: null, left: null });
+    const [marker, setMarker] = useState({ top: null, left: null, width: null, height: null });
     const [dragging, setDragging] = useState(false);
     const [fullscreenWarnings, setFullscreenWarnings] = useState(0);
 
@@ -84,9 +83,11 @@ export default function Quiz() {
 
                 launchFullScreen(document.documentElement);
 
-                if (fullscreenWarnings >= 2) {
+                if (fullscreenWarnings >= 3) {
                     console.log(`User has received ${fullscreenWarnings + 1} warnings about staying in fullscreen.`);
-                    // Add functionality to end quiz
+                    resetQuiz();
+                    setShowResetModal(false);
+                    router.replace(`/quizzes`);
                 }
             }
         }, 5000);
@@ -115,11 +116,11 @@ export default function Quiz() {
         };
 
         window.addEventListener('beforeunload', preventReload);
-        window.addEventListener('keydown', handleKeyDown); 
+        window.addEventListener('keydown', handleKeyDown);
 
         return () => {
             window.removeEventListener('beforeunload', preventReload);
-            window.removeEventListener('keydown', handleKeyDown); 
+            window.removeEventListener('keydown', handleKeyDown);
         };
     }, [toast]);
 
@@ -187,6 +188,19 @@ export default function Quiz() {
      * Submit the quiz to the backend
      */
     const clickSubmit = () => {
+
+        if (document.fullscreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+
         let submitData = allAns.map(ans => {
             if (Array.isArray(ans.selectedOption)) {
                 return { ...ans, selectedOption: ans.selectedOption.join(',') };
@@ -199,7 +213,7 @@ export default function Quiz() {
             { questions: submitData }
         ).then((data) => {
             router.replace(
-                { pathname: "/results"},
+                { pathname: "/results" },
                 "/results"
             );
         });
@@ -300,12 +314,20 @@ export default function Quiz() {
         const rect = event.target.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-        setMarker({ top: y, left: x });
-        setDragging(false);
+        setMarker({ top: y, left: x, width: 0, height: 0 });
+        setDragging(true);
     }
-    const draw = () => {
 
+    const draw = (event) => {
+        if (!dragging) {
+            return;
+        }
+        const rect = event.target.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        setMarker({ ...marker, width: x - marker.left, height: y - marker.top });
     }
+
     const endDraw = () => {
         setDragging(false);
         getBoxCoordinates();
@@ -428,7 +450,21 @@ export default function Quiz() {
                                 </>)}
                             {allQuestions[currentQuestion]?.type === "Hotspot" && (
                                 <>
-                                    <Image src={allQuestions[currentQuestion]?.imageUrl} style={{width: '750px' ,height:'500px'}}/>
+
+                                    <Image
+                                        boxSize="200px"
+                                        src={
+                                            allQuestions[currentQuestion]?.imageUrl
+                                        }
+                                        alt="Hotspot"
+                                        style={{
+                                            position: "relative",
+                                            display: "inline-block",
+                                            overflow: "hidden",
+                                            width: "750px",
+                                            height: "500px",
+                                        }}
+                                    />
                                 </>)}
 
                             <Stack spacing={10} direction={"row"} mt={5}>
