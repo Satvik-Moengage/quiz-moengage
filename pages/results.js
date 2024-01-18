@@ -69,7 +69,6 @@ export default function Results() {
     }, [attemptInfo]);
 
     const quizTaken = userDetails?.quizzesTaken?.find(item => item._id === quizTakenId)
-    console.log(quizTaken, " ", quizTakenId)
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>

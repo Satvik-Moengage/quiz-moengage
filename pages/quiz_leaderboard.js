@@ -6,6 +6,8 @@ import {
     Text,
     Tooltip,
     Tag,
+    VStack,
+    Button
 } from "@chakra-ui/react";
 import Card from "../components/Card";
 import Layout from "../components/Layout";
@@ -24,20 +26,21 @@ const getPercentageScore = (score, totalResponses) =>
 export default function QuizLeaderBoard() {
     const router = useRouter();
     const { quizId } = router.query;
-    const { data: users } = useSWR(`/api/quiz/submissions/leaderboard/${quizId}`, fetcher);
+    const { data: users } = useSWR(()=>`/api/quiz/submissions/leaderboard/${quizId}`, fetcher);
+    const { data: quiz } = useSWR(() => `/api/quiz/details/${quizId}`, fetcher);
     const { data } = useSession;
-
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
             <Head>
                 <title>Quiz Platform | Leaderboard</title>
             </Head>
-            <Heading py={5}>Submissions</Heading>
+            <Heading py={5}>{quiz.title}</Heading>
             <Card>
                 {users?.map((quizParticipant) => (
                     <UserItem
                         key={quizParticipant?.entityId}
                         user={quizParticipant}
+                        quizId={quizId}
                         isLoggedInUserAdmin={data?.user?.isAdmin}
                     />
                 ))}
@@ -46,23 +49,24 @@ export default function QuizLeaderBoard() {
     );
 }
 
-const UserItem = ({ user, isLoggedInUserAdmin }) => {
+const UserItem = ({ user, isLoggedInUserAdmin, quizId }) => {
     const router = useRouter();
+    const quizTaken = user?.quizzesTaken?.find(item=>item.quizId === quizId)
     return (
         <Box mb={6}>
+            {quizTaken && quizTaken.attempts.map((attempt, idx) => (
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    {/* To add a push state */}
                     <Flex
                         alignItems={"flex-start"}
                         justifyContent={"space-between"}
                         flexDirection={"column"}
                     >
-                        <Text fontSize={"xl"}>{user?.userName}</Text>
+                        <Text fontSize={"xl"}>{user?.name}</Text>
                         <Text fontSize={"md"} color={"gray.500"}>
                             {`${getPercentageScore(
-                                user?.score,
-                                user?.responses?.length
+                                attempt?.score,
+                                attempt?.responses?.length
                             )}%`}
                         </Text>
                     </Flex>
@@ -74,7 +78,7 @@ const UserItem = ({ user, isLoggedInUserAdmin }) => {
                     size="lg"
                     borderRadius={"full"}
                 >
-                    {user?.quizTitle}
+                    {quizTaken?.quizTitle}
                 </Tag>
                 <Tooltip
                     label={"View Attempt"}
@@ -87,13 +91,14 @@ const UserItem = ({ user, isLoggedInUserAdmin }) => {
                         icon={<BsClipboardData />}
                         isRound
                         bg={"cyan.100"}
-                        disabled={!isLoggedInUserAdmin}
+                        // disabled={!isLoggedInUserAdmin}
                         onClick={() => {
                             router.push(
                                 {
                                     pathname: "/results",
                                     query: {
-                                        userId: user?.attemptId,
+                                        attemptId: attempt?._id,
+                                        quizTakenId: quizTaken?._id
                                     },
                                 },
                                 "/results"
@@ -101,7 +106,7 @@ const UserItem = ({ user, isLoggedInUserAdmin }) => {
                         }}
                     />
                 </Tooltip>
-            </Flex>
+            </Flex> ))}
             <br />
             <hr
                 style={{
@@ -113,6 +118,43 @@ const UserItem = ({ user, isLoggedInUserAdmin }) => {
         </Box>
     );
 };
+
+// const UserItem = ({ user, isLoggedInUserAdmin, quizId }) => {
+//     const router = useRouter();
+
+//     const quizTaken =
+//         user?.quizzesTaken?.find(quiz => quiz.quizId === quizId);
+
+//     const handleClick = (attemptId) => {
+//         // Navigate to 'results', passing attemptId as query parameter
+//         router.push({
+//             pathname: "/results",
+//             query: { attemptId: attemptId, quizTakenId : quizTaken._id },
+//         });
+//     }
+
+//     return (
+//         <Box mb={6}>
+//             <Flex alignItems={"center"} justifyContent={quizTaken ? "space-between" : "flex-start"}>
+//                 <Flex alignItems={"center"} flexDirection={"column"}>
+//                     <Text fontSize={"xl"}>{user.name}</Text>
+//                     <Text fontSize={"md"} color={"gray.500"}>
+//                         Score: {quizTaken?.attempts?.map(attempt => attempt.score).join(' | ')}
+//                     </Text>
+//                 </Flex>
+//                 {quizTaken && 
+//                     quizTaken.attempts.map((attempt, idx) => (
+//                         <Button key={idx} onClick={() => handleClick(attempt._id)}>
+//                             View Attempt {idx + 1}
+//                         </Button>
+//                     ))
+//                 }
+//             </Flex>
+//             <br />
+//             <hr style={{ backgroundColor: "#CBD5E0", color: "#CBD5E0", height: 2 }}/>
+//         </Box>
+//     );
+// };
 
 QuizLeaderBoard.getLayout = function getLayout(page) {
     return <Layout>{page}</Layout>;

@@ -1,5 +1,5 @@
 
-import {QuizTakenSchema} from "../../../../../schemas";
+import {QuizTakenSchema, UserSchema} from "../../../../../schemas";
 import MongoDbClient from "../../../../../utils/mongo_client";
 
 export default async function handler(req, res){
@@ -11,18 +11,21 @@ export default async function handler(req, res){
 
 async function getUsersLeaderboard(req, res) {
     const { quizId } = req.query;
-
     const db = new MongoDbClient();
     await db.initClient();
 
     try {
 
-        let users = await QuizTakenSchema.find({ quizId: quizId })
-
-        // sort by score
-        users = users.sort((a,b) => b.score - a.score)
+        let users = await UserSchema.find({})
         
-        return res.status(200).json(users);
+        const usersWhoTookQuiz = users.filter(user =>
+            user.quizzesTaken.some(quiz =>
+                quiz.quizId === quizId
+            )
+        );
+        // sort by score
+        //users = usersWhoTookQuiz.sort((a,b) => b.score - a.score)
+        return res.status(200).json(usersWhoTookQuiz);
     } catch (err) {
         console.log(err);
         return res.status(400).json({

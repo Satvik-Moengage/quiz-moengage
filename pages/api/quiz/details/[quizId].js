@@ -20,7 +20,7 @@ async function getQuizDetails(req, res) {
 
     const db = new MongoDbClient();
     await db.initClient();
-
+    console.log(quizId)
     try {
         const quiz = await QuizSchema.findById(quizId);
         return res.status(200).json({

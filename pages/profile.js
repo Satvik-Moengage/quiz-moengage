@@ -15,7 +15,6 @@ import { useEffect, useState } from 'react';
 export default function Profile(){
     const [userDetails, setUserDetails] = useState(null);
     const { data } = useSession();
-    console.log(data?.user?.id)
 
     const fetchUserDetails = async (userId) => {
         try {
