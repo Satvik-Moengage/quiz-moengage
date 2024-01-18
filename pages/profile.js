@@ -10,9 +10,32 @@ import Card from "../components/Card";
 import { useSession } from "next-auth/react";
 import Layout from "../components/Layout"
 import Head from "next/head"
+import { useEffect, useState } from 'react';
 
 export default function Profile(){
+    const [userDetails, setUserDetails] = useState(null);
     const { data } = useSession();
+    console.log(data?.user?.id)
+
+    const fetchUserDetails = async (userId) => {
+        try {
+            const response = await fetch(`/api/user/details/${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setUserDetails(data);
+            } else {
+                console.error('Failed to fetch user details', response);
+            }
+        } catch (error) {
+            console.error('Error fetching user details', error);
+        }
+    };
+
+    useEffect(() => {
+        if (data?.user?.id) {
+            fetchUserDetails(data.user.id);
+        }
+    }, [data?.user?.id]);
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
@@ -50,7 +73,7 @@ export default function Profile(){
                                         Name
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.name}
+                                    {userDetails?.name}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -63,7 +86,7 @@ export default function Profile(){
                                         Email
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.email}
+                                    {userDetails?.email}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -76,7 +99,7 @@ export default function Profile(){
                                         Role
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.isAdmin ? "Administrator" : "Student"}
+                                    {userDetails?.isAdmin ? "Administrator" : "Student"}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -89,7 +112,7 @@ export default function Profile(){
                                         Quizzes Enrolled
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.quizzesEnrolled.length}
+                                    {userDetails?.quizzesEnrolled.length}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -102,7 +125,7 @@ export default function Profile(){
                                         Quizzes Submitted
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.quizzesTaken.length}
+                                    {userDetails?.quizzesTaken.length}
                                     </Text>
                                 </Box>
                             </SimpleGrid>
