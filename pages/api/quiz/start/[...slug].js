@@ -24,7 +24,7 @@ async function startQuiz(req, res) {
     const { slug } = req.query;
     const quizId = slug[0];
     const userId = slug[1];
-    
+
     const db = new MongoDbClient();
     await db.initClient();
 
@@ -56,7 +56,7 @@ async function startQuiz(req, res) {
             questions: quiz.questions,
             duration: quiz.duration,
         };
-        
+
 
         return res.status(200).json({
             message: `Quiz started`,
@@ -68,111 +68,9 @@ async function startQuiz(req, res) {
         return res.status(400).json({
             error: err,
         });
-    }  
+    }
 }
 
-// async function markQuiz(req, res) {
-//     const { slug } = req.query;
-
-//     const quizId = slug[0];
-//     const userId = slug[1];
-
-//     const db = new MongoDbClient();
-//     await db.initClient();
-
-//     try {
-//         let user = await UserSchema.findById(userId); // fetch user
-//         let quiz = await QuizSchema.findById(quizId);
-
-//         const questionsU = await Question.find({ quizId: quizId });// fetch the quiz
-
-//         //user's answers
-//         const { questions } = req.body;
-//         let score = 0;
-
-//         // retrieve questions from session
-//         const quizData = {
-//             questions: questionsU,
-//             duration: quiz.duration,
-//         };
-//         //let { questions: storedQuestions } = quizData;
-//         let newAttempt = new Attempt({
-//             score: 0,
-//             responses: []
-//         });
-    
-//         let responsesIds = [];
-
-//         if (quizData.questions) {
-//             quizData.questions.forEach(async (item, i) => {
-//                 if (
-//                     String(questions[i].selectedOption).toLowerCase() ===
-//                     String(item.correctAnswer).toLowerCase()
-//                 ) {
-//                     newAttempt.score += 1;
-//                 }
-
-//                 let newResp = new ResponseSchema({
-//                     description: item.description,
-//                     selected: questions[i].selectedOption,
-//                     questionId: item._id ,
-//                     quizId: quizId,
-//                     correctAnswer: item.correctAnswer,
-//                     options: item.options,
-//                     attemptId: attemptId._id,
-//                 });
-
-//                 await newResp.save();
-//                 let savedResponse = await newResp.save();
-//                 responsesIds.push(savedResponse._id);
-                
-//             });
-
-//             newAttempt.responses = responsesIds;
-
-//             newAttempt = await newAttempt.save(); // Make sure to save the newAttempt to get an ObjectId
-
-//             let quizTaken
-
-//             // Check if there is an existing QuizTaken object to update, or if we have to create a new one
-//             const existingQuizTaken = await QuizTaken.findOne({ quizId: quizId });
-
-//             if (existingQuizTaken) {
-//                 // If the QuizTaken object already exists, update it with the new attempt
-//                 existingQuizTaken.attempt.push(newAttempt); // Add the new attempt to the array of attempts
-//                 await existingQuizTaken.save();
-//                 quizTaken = existingQuizTaken
-//             } else {
-//                 // If no QuizTaken object exists, create a new one
-//                 let newQuizTaken = new QuizTaken({
-//                     quizId: quizId,
-//                     quizTitle: quiz.title,
-//                     attempt: [newAttempt] 
-//                 });
-
-//                 newQuizTaken = await newQuizTaken.save();
-//                 quizTaken = newQuizTaken
-//             }
-            
-
-//             await UserSchema.findByIdAndUpdate(userId, {
-//                 $push: { quizzesTaken: quizTaken },
-//               });
-//             return res.status(200).json({
-//                 message: "Quiz Submitted Successfully!"
-//             });
-//         } else {
-//             return res.status(400).json({
-//                 error: "An error was encountered",
-//             });
-//         }
-//     } catch (err) {
-//         console.log(err);
-//         return res.status(400).json({
-//             error: err,
-//         });
-//     }  
-// }
 async function markQuiz(req, res) {
     const { slug } = req.query;
     const quizId = slug[0];
@@ -184,6 +82,8 @@ async function markQuiz(req, res) {
         const user = await UserSchema.findById(userId); // Fetch user
         const quiz = await QuizSchema.findById(quizId);
         const questionsU = await Question.find({ quizId }); // fetch the quiz questions
+
+        console.log(questionsU)
 
         const { questions } = req.body;
         let score = 0;
@@ -200,11 +100,33 @@ async function markQuiz(req, res) {
         for (let i = 0; i < questionsU.length; i++) {
             const item = questionsU[i];
             const userAnswer = questions[i].selectedOption;
-            
-            if (String(userAnswer).toLowerCase() === String(item.correctAnswer).toLowerCase()) {
-                score += 1;
+
+            console.log(i)
+            console.log(item.type, item.correctAnswer)
+            console.log(userAnswer, 'answer')
+            if (item.type === "Hotspot") {
+                const userClickedTop = userAnswer.top;
+                const userClickedLeft = userAnswer.left;
+
+                const correctTop = item.correctAnswer.top;
+                const correctLeft = item.correctAnswer.left;
+                const correctBottom = correctTop + item.correctAnswer.height;
+                const correctRight = correctLeft + item.correctAnswer.width;
+
+                if (
+                    userClickedTop >= correctTop &&
+                    userClickedTop <= correctBottom &&
+                    userClickedLeft >= correctLeft &&
+                    userClickedLeft <= correctRight
+                ) {
+                    score += 1;
+                }
+            } else {
+                if (String(userAnswer).toLowerCase() === String(item.correctAnswer).toLowerCase()) {
+                    score += 1;
+                }
             }
-            
+
             const newResponse = new ResponseSchema({
                 description: item.description,
                 selected: userAnswer,
@@ -217,7 +139,7 @@ async function markQuiz(req, res) {
 
             // Save the response
             await newResponse.save();
-            
+
             // Reference the response in the Attempt
             newAttempt.responses.push(newResponse._id);
         }
@@ -251,7 +173,7 @@ async function markQuiz(req, res) {
             attemptId: newAttempt._id,
             quizTakenId: quiz_taken._id
         });
-    
+
     } catch (err) {
         console.error(err);
         return res.status(500).json({

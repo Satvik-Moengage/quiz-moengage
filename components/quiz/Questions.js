@@ -171,6 +171,7 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
               </HStack>
             </AccordionButton>
           </Heading>
+          {/* h */}
           {['MCQ', 'MCM', 'True/False'].includes(question?.type) && (
             <AccordionPanel pb={4}>
               {question?.options?.map((opt, i) => (

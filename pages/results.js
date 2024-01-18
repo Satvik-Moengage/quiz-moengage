@@ -128,6 +128,8 @@ const QuestionItem = ({ response }) => {
             return <Icon as={IoCloseOutline} w={4} h={5} color={"red"} />;
         }
     };
+    console.log(response)
+    
     return (
         <AccordionItem my={3}>
             {({ isExpanded }) => (

@@ -184,6 +184,14 @@ export default function Quiz() {
         setAllAns(newState);
         setCurrentAns(selectedValues);
     };
+
+    const handleHotspotChange = (selectedValues) => {
+        const newState = [...allAns];
+        newState[currentQuestion].selectedOption = selectedValues;
+
+        setAllAns(newState);
+        setCurrentAns(selectedValues);
+    };
     /**
      * Submit the quiz to the backend
      */
@@ -213,13 +221,30 @@ export default function Quiz() {
             { questions: submitData }
         ).then((data) => {
             router.replace(
-                { pathname: "/results",
-                query:{ attemptId: data.attemptId, quizTakenId : data.quizTakenId } },
+                {
+                    pathname: "/results",
+                    query: { attemptId: data.attemptId, quizTakenId: data.quizTakenId }
+                },
                 "/results"
             );
         });
     };
 
+    const recordHotspotAnswer = (event) => {
+        const rect = event.target.getBoundingClientRect();
+        const x = Math.round(event.clientX - rect.left); 
+        const y = Math.round(event.clientY - rect.top);  
+      
+        setMarker({ top: y, left: x, width: null, height: null });
+        setTimeout(5000);
+
+        const newState = [...allAns];
+        newState[currentQuestion].selectedOption = marker;
+
+        setAllAns(newState);
+        setCurrentAns(marker);
+      };
+      console.log(marker);
     /**
      * this method takes in the current quiz duration and returns the future end time for the quiz for the countdown component
      */
@@ -237,6 +262,7 @@ export default function Quiz() {
      * @param {*} questions
      * @param duration
      */
+
 
     const setupQuiz = (questions, duration) => {
         var questionsData = [];
@@ -311,33 +337,6 @@ export default function Quiz() {
         router.replace(`/quizzes`);
     };
 
-    const startDraw = (event) => {
-        const rect = event.target.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        setMarker({ top: y, left: x, width: 0, height: 0 });
-        setDragging(true);
-    }
-
-    const draw = (event) => {
-        if (!dragging) {
-            return;
-        }
-        const rect = event.target.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        setMarker({ ...marker, width: x - marker.left, height: y - marker.top });
-    }
-
-    const endDraw = () => {
-        setDragging(false);
-        getBoxCoordinates();
-    }
-
-    const getBoxCoordinates = () => {
-        return marker
-    }
-
     return (
         <Box fontFamily={"Poppins"}>
             <Head>
@@ -377,36 +376,6 @@ export default function Quiz() {
                             <Text size={"md"} mb={3}>
                                 {allQuestions[currentQuestion]?.text}
                             </Text>
-                            {/* {allQuestions[currentQuestion]?.type === "Hotspot" && (
-                            <>
-                                <Box position="relative"> 
-                                <Image
-                                    boxSize="200px"
-                                    src={allQuestions[currentQuestion]?.imageUrl}
-                                    onMouseDown={startDraw}
-                                    onMouseUp={endDraw}
-                                    onDragStart={(event) => event.preventDefault()}
-                                    alt="Hotspot"
-                                    style={{display: 'block', width: '100%', height: 'auto'}}
-                                />
-                                {marker &&
-                                    <Icon
-                                        boxSize={5} 
-                                        viewBox="0 0 24 24" 
-                                        stroke="currentColor"
-                                        fill="none" 
-                                        style={{
-                                            position: 'absolute',
-                                            top: marker.top + 'px', 
-                                            left: marker.left + 'px'
-                                        }}
-                                    >
-
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </Icon>
-                                }
-                                </Box>
-                            </>)} */}
                             {allQuestions[currentQuestion]?.type === "MCQ" && (
                                 <RadioGroup onChange={handleChange} value={currentAns}>
                                     <Stack direction="column" spacing={4}>
@@ -450,14 +419,12 @@ export default function Quiz() {
                                     </RadioGroup>
                                 </>)}
                             {allQuestions[currentQuestion]?.type === "Hotspot" && (
-                                <>
-
+                                <Box position="relative">
                                     <Image
                                         boxSize="200px"
-                                        src={
-                                            allQuestions[currentQuestion]?.imageUrl
-                                        }
+                                        src={allQuestions[currentQuestion]?.imageUrl}
                                         alt="Hotspot"
+                                        onClick={recordHotspotAnswer}
                                         style={{
                                             position: "relative",
                                             display: "inline-block",
@@ -466,7 +433,22 @@ export default function Quiz() {
                                             height: "500px",
                                         }}
                                     />
-                                </>)}
+                                    {marker && (
+                                        <Box
+                                            style={{
+                                                position: 'absolute',
+                                                top: marker.top + 'px',
+                                                left: marker.left + 'px',
+                                                width: '10px',
+                                                height: '10px',
+                                                backgroundColor: 'red',
+                                                borderRadius: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                            }}
+                                        ></Box>
+                                    )}
+                                </Box>
+                            )}
 
                             <Stack spacing={10} direction={"row"} mt={5}>
                                 {prevBtn()}
@@ -476,7 +458,6 @@ export default function Quiz() {
                     </Stack>
                 )}
             </Flex>
-            {/* Dialog Box to confirm quiz submission */}
             <ConfirmDialog
                 isOpen={showConfirmModal}
                 onClose={setShowConfirmModal}
