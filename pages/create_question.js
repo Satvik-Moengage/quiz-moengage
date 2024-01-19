@@ -91,6 +91,14 @@ export default function CreateQuestion() {
     setLoading(false);
   };
 
+  const handleRemoveOption = (index) => {
+    const newOptions = options1.filter((option, opIndex) => opIndex !== index);
+    setOptions(newOptions);
+    if (correctAnswer.includes(newOptions[index])) {
+      setCorrectAnswer(correctAnswer.filter((cA) => cA !== newOptions[index]));
+    }
+};
+
   const uploadImage = async () => {
     try {
       const formData = new FormData();
@@ -202,67 +210,69 @@ export default function CreateQuestion() {
               </FormControl>
               {/* Multi choice single correct */}
               {questionType === "mcq" && (
-                <>
-                  {options1.map((option, index) => (
-                    <GridItem key={index} colSpan={[6, 3]}>
-                      <Flex alignItems="center" mb={4}>
-                        <Radio
-                          mr={2}
-                          isChecked={correctAnswer === option}
-                          value={option}
-                          onChange={(e) => setCorrectAnswer(e.target.value)}
-                        />
-                        <FormControl id={`option${index + 1}`}>
-                          <FormLabel ml={2}>Option {index + 1}</FormLabel>
-                          <Input
-                            variant={"flushed"}
-                            color={"gray.500"}
-                            placeholder={`Option ${index + 1}`}
-                            value={option}
-                            onChange={(e) => handleOptionChange(index, e)}
-                          />
-                        </FormControl>
-                      </Flex>
-                    </GridItem>
-                  ))}
-                  <Button onClick={handleAddOption}>Add Option</Button>
-                </>
+                  <>
+                      {options1.map((option, index) => (
+                          <GridItem key={index} colSpan={[6, 3]}>
+                              <Flex alignItems="center" mb={4}>
+                                  <Radio
+                                      mr={2}
+                                      isChecked={correctAnswer === option}
+                                      value={option}
+                                      onChange={(e) => setCorrectAnswer(e.target.value)}
+                                  />
+                                  <FormControl id={`option${index + 1}`}>
+                                      <FormLabel ml={2}>Option {index + 1}</FormLabel>
+                                      <Input
+                                          variant={"flushed"}
+                                          color={"gray.500"}
+                                          placeholder={`Option ${index + 1}`}
+                                          value={option}
+                                          onChange={(e) => handleOptionChange(index, e)}
+                                      />
+                                  </FormControl>
+                                  <Button ml={2} onClick={() => handleRemoveOption(index)}>Delete</Button>
+                              </Flex>
+                          </GridItem>
+                      ))}
+                      <Button onClick={handleAddOption}>Add Option</Button>
+                  </>
               )}
-              {/* Multiple choice multi correct */}
+
               {questionType === "mcm" && (
-                <>
-                  {options1.map((option, index) => (
-                    <GridItem key={index} colSpan={[6, 3]}>
-                      <Flex alignItems="center" mb={4}>
-                        <Checkbox
-                          mr={2}
-                          isChecked={correctAnswer.includes(option)}
-                          value={option}
-                          onChange={(e) =>
-                            setCorrectAnswer(
-                              e.target.checked
-                                ? [...correctAnswer, e.target.value]
-                                : correctAnswer.filter(
-                                  (ca) => ca !== e.target.value
-                                )
-                            )
-                          }
-                        />
-                        <FormControl id={`option${index + 1}`}>
-                          <FormLabel ml={2}>Option {index + 1}</FormLabel>
-                          <Input
-                            variant={"flushed"}
-                            color={"gray.500"}
-                            placeholder={`Option ${index + 1}`}
-                            value={option}
-                            onChange={(e) => handleOptionChange(index, e)}
-                          />
-                        </FormControl>
-                      </Flex>
-                    </GridItem>
-                  ))}
-                  <Button onClick={handleAddOption}>Add Option</Button>
-                </>
+                  <>
+                      {options1.map((option, index) => (
+                          <GridItem key={index} colSpan={[6, 3]}>
+                              <Flex alignItems="center" mb={4}>
+                                  <Checkbox
+                                      mr={2}
+                                      isChecked={correctAnswer.includes(option)}
+                                      value={option}
+                                      onChange={(e) =>
+                                          setCorrectAnswer(
+                                              e.target.checked
+                                                  ? [...correctAnswer, e.target.value]
+                                                  : correctAnswer.filter(
+                                                      (ca) => ca !== e.target.value
+                                                  )
+                                          )
+                                      }
+                                  />
+                                  <FormControl id={`option${index + 1}`}>
+                                      <FormLabel ml={2}>Option {index + 1}</FormLabel>
+                                      <Input
+                                          variant={"flushed"}
+                                          color={"gray.500"}
+                                          placeholder={`Option ${index + 1}`}
+                                          value={option}
+                                          onChange={(e) => handleOptionChange(index, e)}
+                                      />
+                                  </FormControl>
+                                  <Button ml={2} onClick={() => handleRemoveOption(index)}>Delete</Button>
+                              </Flex>
+                          </GridItem>
+                      ))}
+                    <Button onClick={handleAddOption}>Add Option</Button>
+                  </>
               )}
               {/* True/False */}
               {questionType === "tf" && (

@@ -50,6 +50,7 @@ const QuizItem = ({ quiz, user }) => {
     const [loading, setLoading] = useState(false);
     const [quizData, setQuizData ] = useState();
 
+    console.log(quiz._id, " ", user.id)
 
     const start = () => {
 

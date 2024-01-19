@@ -132,6 +132,8 @@ export default function Results() {
 }
 
 const QuestionItem = ({ response }) => {
+    
+
     const respIcon = (resp) => {
         if(resp.type === "Hotspot"){
             // console.log(resp)

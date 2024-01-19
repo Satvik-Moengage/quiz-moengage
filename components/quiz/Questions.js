@@ -136,7 +136,7 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
                 {question?.description}
               </Box>
               <HStack spacing={4}>
-                <Tooltip
+                {/* <Tooltip
                   label={"Edit Question"}
                   hasArrow
                   placement={"left"}
@@ -151,7 +151,7 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
                     bg={"gray.300"}
                     onClick={onHandleUpdate}
                   />
-                </Tooltip>
+                </Tooltip> */}
                 <Tooltip
                   label={"Remove Question"}
                   hasArrow
