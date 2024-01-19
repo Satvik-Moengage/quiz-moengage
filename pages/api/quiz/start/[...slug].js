@@ -45,13 +45,13 @@ async function startQuiz(req, res) {
                 error: "Quiz has not started yet!",
             });
         }
-        // if (
-        //     new Date(new Date(quiz.endTime).toISOString().replace("Z", "")) <= Date.now()
-        // ) {
-        //     return res.status(400).json({
-        //         error: "Quiz Time has elapsed!",
-        //     });
-        // }
+        if (
+            new Date(new Date(quiz.endTime).toISOString().replace("Z", "")) <= Date.now()
+        ) {
+            return res.status(400).json({
+                error: "Quiz Time has elapsed!",
+            });
+        }
         const quizData = {
             questions: quiz.questions,
             duration: quiz.duration,

@@ -39,7 +39,8 @@ async function createQuiz(req, res) {
             authorId,
             scheduledFor,
             endTime,
-            passingMarks
+            passingMarks,
+            noOfQuestions
         } = req.body;
 
 
@@ -52,7 +53,8 @@ async function createQuiz(req, res) {
             createdAt: Date.now(),
             scheduledFor: scheduledFor,
             endTime: endTime,
-            passingMarks:passingMarks
+            passingMarks:passingMarks,
+            noOfQuestions:noOfQuestions
         });
 
         await newQuiz.save();

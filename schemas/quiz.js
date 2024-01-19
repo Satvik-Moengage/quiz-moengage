@@ -12,7 +12,8 @@ const Quiz = new Schema({
     scheduledFor: { type: Date },
     endTime: {type: Date},
     questions:{ type : [QuestionSchema]},
-    passingMarks: { type: Number }
+    passingMarks: { type: Number },
+    noOfQuestions: {type: Number}
 });
 
 Quiz.methods.addQuizTaken = function(quizId) {

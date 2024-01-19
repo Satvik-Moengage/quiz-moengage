@@ -44,7 +44,7 @@ export default function Quiz() {
     const [totalDuration, setTotalDuration] = useState(0);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
-    const [marker, setMarker] = useState({ top: null, left: null, width: null, height: null });
+    const [marker, setMarker] = useState({ top: 0, left: 0, width: null, height: null });
     const [dragging, setDragging] = useState(false);
     const [fullscreenWarnings, setFullscreenWarnings] = useState(0);
 
@@ -268,6 +268,7 @@ export default function Quiz() {
         var questionsData = [];
         var answerData = [];
         var quizDuration = 0;
+        var noOfQuestions = 3;
 
         if (questions?.length === 0) {
             return;
@@ -307,6 +308,7 @@ export default function Quiz() {
             }
 
             questionsData.push(questObj);
+
             let ansObj = {
                 selectedOption: null,
             };
@@ -314,6 +316,17 @@ export default function Quiz() {
             answerData.push(ansObj);
         });
         quizDuration = getTotalTime(duration);
+
+        // function shuffleArray(array) {
+        //     for (let i = array.length - 1; i > 0; i--) {
+        //         const j = Math.floor(Math.random() * (i + 1));
+        //         [array[i], array[j]] = [array[j], array[i]];
+        //     }
+        //     return array;
+        // }
+
+        // questionsData = shuffleArray(questionsData).slice(0, noOfQuestions);
+        // console.log(questionsData)
 
         setAllQuestions(questionsData);
         setAllAns(answerData);

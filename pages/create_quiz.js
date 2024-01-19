@@ -31,6 +31,7 @@ export default function CreateQuiz() {
     const router = useRouter();
     const toast = useToast();
     const [duration, setDuration] = useState(10);
+    const [noOfQuestions, setNoOfQuestions] = useState(10);
     const [passingMarks, setPassingMarks] = useState(85);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -50,7 +51,8 @@ export default function CreateQuiz() {
             authorId: session.user.id,
             scheduledFor: scheduledFor,
             endTime: endTime,
-            passingMarks: passingMarks
+            passingMarks: passingMarks,
+            noOfQuestions:noOfQuestions
         };
 
         const resetForm = () => {
@@ -184,6 +186,17 @@ export default function CreateQuiz() {
                     type={"number"}
                     value={passingMarks}
                     onChange={(e) => setPassingMarks(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="no of questions">
+                  <FormLabel>Number of Questions</FormLabel>
+                  <Input
+                    variant={"flushed"}
+                    color={"gray.500"}
+                    placeholder="Select number of questions"
+                    type={"number"}
+                    value={noOfQuestions}
+                    onChange={(e) => setNoOfQuestions(e.target.value)}
                   />
                 </FormControl>
                 <Stack spacing={10} my={8}>
