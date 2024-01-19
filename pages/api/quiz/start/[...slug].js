@@ -101,9 +101,6 @@ async function markQuiz(req, res) {
             const item = questionsU[i];
             const userAnswer = questions[i].selectedOption;
 
-            console.log(i)
-            console.log(item.type, item.correctAnswer)
-            console.log(userAnswer, 'answer')
             if (item.type === "Hotspot") {
                 const userClickedTop = userAnswer.top;
                 const userClickedLeft = userAnswer.left;

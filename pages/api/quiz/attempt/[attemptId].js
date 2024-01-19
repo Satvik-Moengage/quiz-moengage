@@ -1,6 +1,5 @@
 import MongoDbClient from "../../../../utils/mongo_client";
-import { QuizTakenSchema, ResponseSchema } from "../../../../schemas";
-import { QuizTaken } from "../../../../schemas/quiz_taken";
+import { ResponseSchema } from "../../../../schemas";
 import { Attempt } from "../../../../schemas/attempt";
 
 export default async function handler(req, res) {
