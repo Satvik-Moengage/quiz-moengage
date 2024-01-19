@@ -36,7 +36,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("Student");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
@@ -206,7 +206,7 @@ export default function Register() {
                 </InputRightElement>
               </InputGroup>
             </FormControl>
-            <FormControl id="role">
+            {/* <FormControl id="role">
               <FormLabel>Role</FormLabel>
               <RadioGroup value={role} onChange={setRole}>
                 <Stack spacing={5} direction="row">
@@ -222,7 +222,7 @@ export default function Register() {
                   </Radio>
                 </Stack>
               </RadioGroup>
-            </FormControl>
+            </FormControl> */}
             <Button
               bg="#00237c"
               color={"white"}

@@ -36,7 +36,6 @@ async function createUser(req, res) {
             isAdmin: isAdmin,
             createdAt: Date.now(),
             quizzesEnrolled: [],
-            quizzesTaken: [],
         });
 
         newUser.setPassword(password);
