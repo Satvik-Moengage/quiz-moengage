@@ -80,11 +80,15 @@ export default function Results() {
     attemptInfo?.responses.forEach(response => {
         const question = questionsMap.get(response.questionId);
         if (question) {
+            // console.log(question);
             if (question.imageUrl) {
                 response.imageUrl = question.imageUrl;
             }
             if (question.type) {
                 response.type = question.type;
+            }
+            if (question.type === 'Fill') {
+                response.dropdowns = question.dropdowns;
             }
         }
     });
@@ -132,38 +136,126 @@ export default function Results() {
 }
 
 const QuestionItem = ({ response }) => {
-    
+
+
+    const renderAnswerChoices = () => {
+        if (['MCQ', 'MCM', 'True/False'].includes(response.type)) {
+            return (
+                <Stack spacing={4} direction={"column"}>
+                    {response.options.map((opt, i) => (
+                        <OptionItem
+                            resp={response}
+                            text={opt}
+                            key={i}
+                        />
+                    ))}
+                </Stack>
+            );
+        } else if (response.type === 'Hotspot') {
+
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+                <Image src={response.imageUrl} style={{ width: '750px', height: '500px' }} />
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: response.correctAnswer.top,
+                        left: response.correctAnswer.left,
+                        width: response.correctAnswer.width,
+                        height: response.correctAnswer.height,
+                        border: '2px solid green',  // Or any other indication you want for the box
+                        boxSizing: 'border-box'
+                    }}
+                />
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: response.selected.top,
+                        left: response.selected.left,
+                        border: '5px solid red',
+                        boxSizing: 'border-box'
+                    }}
+                />
+
+            </div>
+        } else if (response.type === 'Fill') {
+            return (
+                <Stack spacing={4} direction={"column"}>
+                    {response.dropdowns.map((dropdown, i) => (
+                        <Box key={i}>
+                            <Text fontSize={'lg'} fontWeight={'semibold'} mb={2}>
+                                Blank {i + 1}
+                            </Text>
+                            <Text color={dropdown.correctAnswer === Object.values(response.selected)[i] ? "green" : "red"}>
+                                Your Answer: {Object.values(response.selected)[i]}
+                            </Text>
+                            <Text color={"green"}>
+                                Correct Answer: {dropdown.correctAnswer}
+                            </Text>
+                            <Box mb={4} />
+                        </Box>
+                    ))}
+                </Stack>
+            );
+        } else {
+            return null;
+        }
+    }
 
     const respIcon = (resp) => {
-        if(resp.type === "Hotspot"){
-            // console.log(resp)
+        if (resp.type === "Hotspot") {
             const userClickedTop = resp.selected.top;
-                const userClickedLeft = resp.selected.left;
-
-                const correctTop = resp.correctAnswer.top;
-                const correctLeft = resp.correctAnswer.left;
-                const correctBottom = correctTop + resp.correctAnswer.height;
-                const correctRight = correctLeft + resp.correctAnswer.width;
-
-                if (
-                    userClickedTop >= correctTop &&
-                    userClickedTop <= correctBottom &&
-                    userClickedLeft >= correctLeft &&
-                    userClickedLeft <= correctRight
-                ) {
-                    return (
-                        <Icon as={IoCheckmarkDoneOutline} w={4} h={5} color={"green"} />
-                    );
-                }
-                else if (String(resp?.selected) === null) {
-                    return (
-                        <Icon as={IoWarningOutline} w={4} h={5} color={"goldenrod"} />
-                    );
-                } else {
-                    return <Icon as={IoCloseOutline} w={4} h={5} color={"red"} />;
-                }
+            const userClickedLeft = resp.selected.left;
+            const correctTop = resp.correctAnswer.top;
+            const correctLeft = resp.correctAnswer.left;
+            const correctBottom = correctTop + resp.correctAnswer.height;
+            const correctRight = correctLeft + resp.correctAnswer.width;
+            if (
+                userClickedTop >= correctTop &&
+                userClickedTop <= correctBottom &&
+                userClickedLeft >= correctLeft &&
+                userClickedLeft <= correctRight
+            ) {
+                return (
+                    <Icon as={IoCheckmarkDoneOutline} w={4} h={5} color={"green"} />
+                );
+            } else if (String(resp?.selected) === null) {
+                return (
+                    <Icon as={IoWarningOutline} w={4} h={5} color={"goldenrod"} />
+                );
+            } else {
+                return <Icon as={IoCloseOutline} w={4} h={5} color={"red"} />;
+            }
         }
-        else{
+        else if (resp.type === 'MCM') {
+            let userAnsArray = resp.selected.split(",");
+            if (userAnsArray.sort().join(",") === resp.correctAnswer.sort().join(",")) {
+                return (
+                    <Icon as={IoCheckmarkDoneOutline} w={4} h={5} color={"green"} />
+                );
+            } else {
+                return <Icon as={IoCloseOutline} w={4} h={5} color={"red"} />;
+            }
+        }
+        else if (resp.type === 'Fill') {
+            let allCorrect = true;
+            const userAnswerArray = Object.values(resp.selected);
+            const dropdownsArray = resp.dropdowns.map(d => d.correctAnswer);
+
+            userAnswerArray.forEach((answer, index) => {
+                if (answer !== dropdownsArray[index]) {
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                return (
+                    <Icon as={IoCheckmarkDoneOutline} w={4} h={5} color={"green"} />
+                );
+            } else {
+                return <Icon as={IoCloseOutline} w={4} h={5} color={"red"} />;
+            }
+        }
+        else {
             if (
                 String(resp?.selected).toLowerCase() ===
                 String(resp?.correctAnswer).toLowerCase()
@@ -179,7 +271,6 @@ const QuestionItem = ({ response }) => {
                 return <Icon as={IoCloseOutline} w={4} h={5} color={"red"} />;
             }
         }
-        
     };
 
     return (
@@ -200,42 +291,7 @@ const QuestionItem = ({ response }) => {
                         </AccordionButton>
                     </Heading>
                     <AccordionPanel pb={4}>
-                        {['MCQ', 'MCM', 'True/False'].includes(response.type) ? (
-                            <Stack spacing={4} direction={"column"}>
-                                {response.options.map((opt, i) => (
-                                    <OptionItem
-                                        resp={response}
-                                        text={opt}
-                                        key={i}
-                                    />
-                                ))}
-                            </Stack>
-                        ) : response.type === 'Hotspot' ? (
-                            <div style={{ position: 'relative', display: 'inline-block' }}>
-                                <Image src={response.imageUrl} style={{ width: '750px', height: '500px' }} />
-                                <div
-                                    style={{
-                                        position: 'absolute',
-                                        top: response.correctAnswer.top,
-                                        left: response.correctAnswer.left,
-                                        width: response.correctAnswer.width,
-                                        height: response.correctAnswer.height,
-                                        border: '2px solid green',  // Or any other indication you want for the box
-                                        boxSizing: 'border-box'
-                                    }}
-                                />
-                                <div
-                                    style={{
-                                        position: 'absolute',
-                                        top: response.selected.top,
-                                        left: response.selected.left,
-                                        border: '5px solid red',
-                                        boxSizing: 'border-box'
-                                    }}
-                                />
-
-                            </div>
-                        ) : null}
+                        {renderAnswerChoices()}
                     </AccordionPanel>
                 </>
             )}
@@ -244,8 +300,8 @@ const QuestionItem = ({ response }) => {
 };
 
 const OptionItem = ({ resp, text }) => {
-    const isCorrectAnswer = resp.correctAnswer.includes(text);
-    const isSelectedAnswer = resp.selected.includes(text);
+    const isCorrectAnswer = resp?.correctAnswer?.includes(text);
+    const isSelectedAnswer = resp?.selected?.includes(text);
 
     let optionColor;
     if (isCorrectAnswer && isSelectedAnswer) {

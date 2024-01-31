@@ -391,8 +391,7 @@ export default function CreateQuestion() {
                   <Button my={3} onClick={addSelectInput} width="200px">
                     Add Dropdown
                   </Button>
-
-                  <div></div>
+                    <div></div>
                   {selectInputs.map((selectInput, selectIndex) => (
                     <GridItem key={selectIndex} colSpan={[6, 3]}>
                       <FormControl id={`dropdownAnswer${selectIndex + 1}`}>

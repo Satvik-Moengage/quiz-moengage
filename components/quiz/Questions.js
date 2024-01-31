@@ -16,11 +16,10 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import useSWR from 'swr';
 import axios from 'axios';
 import { GrAdd } from 'react-icons/gr';
 import { CgTrash } from 'react-icons/cg';
-import { FiChevronRight, FiChevronDown, FiEdit3 } from 'react-icons/fi';
+import { FiChevronRight, FiChevronDown } from 'react-icons/fi';
 import { IoDiscOutline } from 'react-icons/io5';
 import Card from '../Card';
 import { useEffect, useState } from 'react';
@@ -34,6 +33,8 @@ const Questions = ({ quiz }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [questions, setQuestions] = useState(quiz?.questions)
+
+  console.log(questions);
 
   useEffect(() => {
     setQuestions(quiz?.questions);
@@ -136,22 +137,6 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
                 {question?.description}
               </Box>
               <HStack spacing={4}>
-                {/* <Tooltip
-                  label={"Edit Question"}
-                  hasArrow
-                  placement={"left"}
-                  bg={"teal"}
-                >
-                  <IconButton
-                    size={'sm'}
-                    aria-label={'edit'}
-                    icon={<FiEdit3 />}
-                    isRound
-                    disabled={isBtnDisabled}
-                    bg={"gray.300"}
-                    onClick={onHandleUpdate}
-                  />
-                </Tooltip> */}
                 <Tooltip
                   label={"Remove Question"}
                   hasArrow
@@ -215,11 +200,17 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
                   left: `${question.correctAnswer.left}px`,
                   width: `${question.correctAnswer.width}px`,
                   height: `${question.correctAnswer.height}px`,
-                  border: '2px solid red',  // Or any other indication you want for the box
+                  border: '2px solid red',
                   boxSizing: 'border-box'
                 }}
               />
             </div>
+          </AccordionPanel>
+          )}
+          {question?.type === 'Fill' && (
+            <AccordionPanel pb={4}>
+            <p>FIB type of question</p>
+            
           </AccordionPanel>
           )}
         </>

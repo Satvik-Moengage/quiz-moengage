@@ -14,7 +14,11 @@ import {
     useToast,
     Checkbox,
     CheckboxGroup,
-    Image
+    Image,
+    FormControl,
+    FormLabel,
+    Select,
+    MenuItem
 } from "@chakra-ui/react";
 import Countdown from "../components/Countdown";
 import Layout from "../components/Layout";
@@ -67,6 +71,17 @@ export default function Quiz() {
             });
         }
     }
+
+    const handleFillChange = (selectedValue, index) => {
+        const newState = [...allAns];
+        if (!newState[currentQuestion].selectedOption) {
+          newState[currentQuestion].selectedOption = {};
+        }
+        newState[currentQuestion].selectedOption['Option' + index] = selectedValue;
+        setAllAns(newState);
+        setCurrentAns(newState[currentQuestion].selectedOption);
+      };
+
     useEffect(() => {
         const fullscreenCheckInterval = setInterval(() => {
 
@@ -213,7 +228,6 @@ export default function Quiz() {
             if (Array.isArray(ans.selectedOption)) {
                 return { ...ans, selectedOption: ans.selectedOption.join(',') };
             }
-            console.log(ans)
             return ans;
         });
 
@@ -268,11 +282,12 @@ export default function Quiz() {
         var questionsData = [];
         var answerData = [];
         var quizDuration = 0;
-        var noOfQuestions = 3;
 
         if (questions?.length === 0) {
             return;
         }
+
+        console.log(questions,"questions")
 
         questions?.map((ques) => {
             let questObj
@@ -306,6 +321,13 @@ export default function Quiz() {
                     type: ques?.type
                 };
             }
+            else if (ques.type === "Fill") {
+                questObj = {
+                    text: ques?.description,
+                    type: ques?.type,
+                    dropdowns: ques?.dropdowns
+                }
+            }
 
             questionsData.push(questObj);
 
@@ -316,17 +338,6 @@ export default function Quiz() {
             answerData.push(ansObj);
         });
         quizDuration = getTotalTime(duration);
-
-        // function shuffleArray(array) {
-        //     for (let i = array.length - 1; i > 0; i--) {
-        //         const j = Math.floor(Math.random() * (i + 1));
-        //         [array[i], array[j]] = [array[j], array[i]];
-        //     }
-        //     return array;
-        // }
-
-        // questionsData = shuffleArray(questionsData).slice(0, noOfQuestions);
-        // console.log(questionsData)
 
         setAllQuestions(questionsData);
         setAllAns(answerData);
@@ -349,6 +360,7 @@ export default function Quiz() {
         setShowResetModal(false);
         router.replace(`/quizzes`);
     };
+    console.log(allAns);
 
     return (
         <Box fontFamily={"Poppins"}>
@@ -433,6 +445,26 @@ export default function Quiz() {
                                     </Stack>
                                 </CheckboxGroup>
                             )}
+                                {allQuestions[currentQuestion]?.type === "Fill" && (
+                                    <Box padding="10px">
+                                        {allQuestions[currentQuestion]?.dropdowns.map((dropdown, index) => (
+                                            <FormControl key={index} marginY="10px">
+                                                <FormLabel>Select for blank {index + 1}:</FormLabel>
+                                                <Select
+                                                    placeholder="Select option"
+                                                    size="md"
+                                                    variant="filled"
+                                                    onChange={(e) => handleFillChange(e.target.value, index)}
+                                                    value={currentAns ? currentAns['Option' + index] : ''}
+                                                >
+                                                    {dropdown.options.map((option, i) =>
+                                                        <option key={`${allQuestions[currentQuestion]}-Option${index}-${option}`} value={option}>{option}</option>
+                                                    )}
+                                                </Select>
+                                            </FormControl>
+                                        ))}
+                                    </Box>
+                                )}
 
                             {allQuestions[currentQuestion]?.type === "Hotspot" && (
                                 <Box position="relative">

@@ -79,22 +79,18 @@ async function markQuiz(req, res) {
     await db.initClient();
 
     try {
-        const user = await UserSchema.findById(userId); // Fetch user
+        const user = await UserSchema.findById(userId); 
         const quiz = await QuizSchema.findById(quizId);
-        const questionsU = await Question.find({ quizId }); // fetch the quiz questions
-
-        console.log(questionsU)
+        const questionsU = await Question.find({ quizId }); 
 
         const { questions } = req.body;
         let score = 0;
 
-        // Create a new empty Attempt instance
         let newAttempt = new Attempt({
             score: 0,
             responses: []
         });
 
-        // Save the Attempt instance to get an _id
         newAttempt = await newAttempt.save();
 
         for (let i = 0; i < questionsU.length; i++) {
@@ -118,7 +114,30 @@ async function markQuiz(req, res) {
                 ) {
                     score += 1;
                 }
-            } else {
+            } 
+            else if (item.type === 'MCM'){
+
+
+                let userAnsArray = userAnswer.split(",");
+                if(userAnsArray.length === 0){
+                    score +=0
+                }
+                if(userAnsArray.sort().join(",") === item.correctAnswer.sort().join(",")){
+                    score+=1;
+                }
+            }
+            else if(item.type === 'Fill') {
+                let allCorrect = true;
+                let userAnswerArray = Object.values(userAnswer);
+            
+                userAnswerArray.forEach((answer, index) => {
+                    if(answer !== item.dropdowns[index].correctAnswer) {
+                        allCorrect = false;
+                    }
+                });
+                if(allCorrect) score+=1;
+            }
+            else {
                 if (String(userAnswer).toLowerCase() === String(item.correctAnswer).toLowerCase()) {
                     score += 1;
                 }
@@ -131,28 +150,22 @@ async function markQuiz(req, res) {
                 quizId: quizId,
                 correctAnswer: item.correctAnswer,
                 options: item.options,
-                attemptId: newAttempt._id  // Reference the saved Attempt's _id
+                attemptId: newAttempt._id  
             });
 
-            // Save the response
             await newResponse.save();
 
-            // Reference the response in the Attempt
             newAttempt.responses.push(newResponse._id);
         }
 
-        // Now that all Responses are saved, update Attempt with correct score and Response references
         newAttempt.score = score;
         await newAttempt.save();
 
-        // Find or create a QuizTaken object for the User
         const existingQuizTakenIndex = user.quizzesTaken.findIndex(qt => String(qt.quizId) === String(quizId));
         if (existingQuizTakenIndex !== -1) {
-            // If existing, update it
             user.quizzesTaken[existingQuizTakenIndex].attempts.push(newAttempt);
             user.markModified(`quizzesTaken.${existingQuizTakenIndex}.attempts`);
         } else {
-            // If not existing, create a new QuizTaken object and add it
             const quizTaken = new QuizTaken({
                 quizId: quizId,
                 quizTitle: quiz.title,
@@ -162,7 +175,6 @@ async function markQuiz(req, res) {
             user.quizzesTaken.push(quizTaken);
         }
 
-        // Save the updated User
         await user.save();
         const quiz_taken = user.quizzesTaken.find(qt => String(qt.quizId) === String(quizId))
         return res.status(200).json({
