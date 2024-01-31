@@ -133,7 +133,7 @@ export default function Quiz() {
         let currQues = currentQuestion + 1;
         setCurrentStep(currentStep + 1);
         setCurrentQuestion(currentQuestion + 1);
-        setCurrentAns(allAns[currQues].selectedOption);
+        setCurrentAns(allAns[currQues]?.selectedOption);
     };
 
     /**
@@ -144,7 +144,7 @@ export default function Quiz() {
         let currQues = currentQuestion - 1;
         setCurrentStep(currentStep - 1);
         setCurrentQuestion(currentQuestion - 1);
-        setCurrentAns(allAns[currQues].selectedOption);
+        setCurrentAns(allAns[currQues]?.selectedOption);
     };
     // Prev Btn
     const prevBtn = () => {
@@ -213,6 +213,7 @@ export default function Quiz() {
             if (Array.isArray(ans.selectedOption)) {
                 return { ...ans, selectedOption: ans.selectedOption.join(',') };
             }
+            console.log(ans)
             return ans;
         });
 
@@ -232,9 +233,9 @@ export default function Quiz() {
 
     const recordHotspotAnswer = (event) => {
         const rect = event.target.getBoundingClientRect();
-        const x = Math.round(event.clientX - rect.left); 
-        const y = Math.round(event.clientY - rect.top);  
-      
+        const x = Math.round(event.clientX - rect.left);
+        const y = Math.round(event.clientY - rect.top);
+
         setMarker({ top: y, left: x, width: null, height: null });
         setTimeout(5000);
 
@@ -243,8 +244,7 @@ export default function Quiz() {
 
         setAllAns(newState);
         setCurrentAns(marker);
-      };
-      console.log(marker);
+    };
     /**
      * this method takes in the current quiz duration and returns the future end time for the quiz for the countdown component
      */
@@ -393,23 +393,12 @@ export default function Quiz() {
                                 <RadioGroup onChange={handleChange} value={currentAns}>
                                     <Stack direction="column" spacing={4}>
                                         {allQuestions[currentQuestion]?.options.map((opt, i) => (
-                                            <Radio value={opt} key={i}>{opt}</Radio>
+                                            <Radio value={opt} key={`${allQuestions[currentQuestion]?.text}-${opt}`}>{opt}</Radio>
                                         ))}
                                     </Stack>
                                 </RadioGroup>
                             )}
-                            {allQuestions[currentQuestion]?.type === "MCM" && (
-                                <CheckboxGroup
-                                    value={currentAns || []}
-                                    onChange={handleMCMChange}
-                                >
-                                    <Stack direction="column" spacing={4}>
-                                        {allQuestions[currentQuestion]?.options.map((opt, i) => (
-                                            <Checkbox value={opt} key={i}>{opt}</Checkbox>
-                                        ))}
-                                    </Stack>
-                                </CheckboxGroup>
-                            )}
+
                             {allQuestions[currentQuestion]?.type === "True/False" && (
                                 <>
                                     <Text size={"md"} mb={3}>
@@ -423,14 +412,28 @@ export default function Quiz() {
                                         <Stack spacing={4} direction={"column"}>
                                             {allQuestions[currentQuestion]?.options.map(
                                                 (opt, i) => (
-                                                    <Radio value={opt} key={opt}>
+                                                    <Radio value={opt} key={`${allQuestions[currentQuestion]?.text}-${opt}`}>
                                                         {opt}
                                                     </Radio>
                                                 )
                                             )}
                                         </Stack>
                                     </RadioGroup>
-                                </>)}
+                                </>)
+                            }
+                            {allQuestions[currentQuestion]?.type === "MCM" && (
+                                <CheckboxGroup
+                                    value={currentAns || []}
+                                    onChange={handleMCMChange}
+                                >
+                                    <Stack direction="column" spacing={4}>
+                                        {allQuestions[currentQuestion]?.options.map((opt, i) => (
+                                            <Checkbox value={opt} key={`${allQuestions[currentQuestion]?.text}-${opt}`}>{opt}</Checkbox>
+                                        ))}
+                                    </Stack>
+                                </CheckboxGroup>
+                            )}
+
                             {allQuestions[currentQuestion]?.type === "Hotspot" && (
                                 <Box position="relative">
                                     <Image
@@ -438,6 +441,7 @@ export default function Quiz() {
                                         src={allQuestions[currentQuestion]?.imageUrl}
                                         alt="Hotspot"
                                         onClick={recordHotspotAnswer}
+                                        key={`${allQuestions[currentQuestion]?.text}-${allQuestions[currentQuestion]?.imageUrl}`}
                                         style={{
                                             position: "relative",
                                             display: "inline-block",
