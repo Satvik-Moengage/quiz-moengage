@@ -80,9 +80,9 @@ export default function Results() {
     attemptInfo?.responses.forEach(response => {
         const question = questionsMap.get(response.questionId);
         if (question) {
-            // console.log(question);
             if (question.imageUrl) {
                 response.imageUrl = question.imageUrl;
+                console.log(response);
             }
             if (question.type) {
                 response.type = question.type;
@@ -151,32 +151,34 @@ const QuestionItem = ({ response }) => {
                     ))}
                 </Stack>
             );
-        } else if (response.type === 'Hotspot') {
-
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-                <Image src={response.imageUrl} style={{ width: '750px', height: '500px' }} />
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: response.correctAnswer.top,
-                        left: response.correctAnswer.left,
-                        width: response.correctAnswer.width,
-                        height: response.correctAnswer.height,
-                        border: '2px solid green',  // Or any other indication you want for the box
-                        boxSizing: 'border-box'
-                    }}
-                />
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: response.selected.top,
-                        left: response.selected.left,
-                        border: '5px solid red',
-                        boxSizing: 'border-box'
-                    }}
-                />
-
-            </div>
+        } 
+        if (response.type === 'Hotspot') {
+            return (
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <Image src={response.imageUrl} style={{ width: '750px', height: '500px' }} />
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: response.correctAnswer.top,
+                            left: response.correctAnswer.left,
+                            width: response.correctAnswer.width,
+                            height: response.correctAnswer.height,
+                            border: '2px solid green', // Or any other indication you want for the box
+                            boxSizing: 'border-box'
+                        }}
+                    />
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: response.selected.top,
+                            left: response.selected.left,
+                            border: '5px solid red',
+                            boxSizing: 'border-box'
+                        }}
+                    />
+        
+                </div>
+            );
         } else if (response.type === 'Fill') {
             return (
                 <Stack spacing={4} direction={"column"}>
