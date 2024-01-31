@@ -34,8 +34,6 @@ const Questions = ({ quiz }) => {
   const router = useRouter();
   const [questions, setQuestions] = useState(quiz?.questions)
 
-  console.log(questions);
-
   useEffect(() => {
     setQuestions(quiz?.questions);
     quiz?.questions.forEach(question => {
@@ -190,28 +188,32 @@ const QuestionItem = ({ question, isBtnDisabled, handleDelete, handleUpdate }) =
           )}
           {question?.type === 'Hotspot' && (
             <AccordionPanel pb={4}>
-            <p>Marked Area</p>
-            <div style={{ position: 'relative' }}>
-              <Image src={question?.imageUrl} style={{width:'750px',height:'500px'}}/>
-              <div
-                style={{
-                  position: 'absolute',
-                  top: `${question.correctAnswer.top}px`,
-                  left: `${question.correctAnswer.left}px`,
-                  width: `${question.correctAnswer.width}px`,
-                  height: `${question.correctAnswer.height}px`,
-                  border: '2px solid red',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-          </AccordionPanel>
+              <p>Marked Area</p>
+              <div style={{ position: 'relative' }}>
+                <Image src={question?.imageUrl} style={{ width: '750px', height: '500px' }} />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: `${question.correctAnswer.top}px`,
+                    left: `${question.correctAnswer.left}px`,
+                    width: `${question.correctAnswer.width}px`,
+                    height: `${question.correctAnswer.height}px`,
+                    border: '2px solid red',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+            </AccordionPanel>
           )}
           {question?.type === 'Fill' && (
             <AccordionPanel pb={4}>
-            <p>FIB type of question</p>
-            
-          </AccordionPanel>
+              {question.dropdowns.map((dropdown, index) => (
+                <Box key={index}>
+                  <Text display="inline">Blank {index + 1} : </Text>
+                  <Text display="inline" color="green">{dropdown.correctAnswer}</Text>
+                </Box>
+              ))}
+            </AccordionPanel>
           )}
         </>
       )}
