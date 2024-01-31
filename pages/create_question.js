@@ -201,11 +201,10 @@ export default function CreateQuestion() {
           return;
         }
       }
-      const ans = getBoxCoordinates();
-      questionData = { description, correctAnswer: ans, type: 'Hotspot', imageUrl: image_url };
-    }
-    if (questionType === "reorder") {
-      questionData = { description, options: sentences, type: 'Reorder' };
+      const coordinates = getBoxCoordinates();
+      console.log(coordinates);
+      questionData = { description, correctAnswer: coordinates, type: 'Hotspot', imageUrl: image_url };
+      console.log(questionData)
     }
     if (questionType === "fib") {
       questionData = {

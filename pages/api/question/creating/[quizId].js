@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
 async function createQuestion(req, res) {
   const { quizId } = req.query;
-  const { description, options, correctAnswer,dropdowns,  type, imageUrl } = req.body;
+  const { description, options, correctAnswer,dropdowns, hotspot,type, imageUrl } = req.body;
 
   if (!quizId || quizId === 'undefined') {
     return res.status(400).json({
@@ -73,6 +73,7 @@ async function createQuestion(req, res) {
           description,
           correctAnswer: correctAnswer,
           type,
+          hotspot,
           imageUrl,
         });
         break;

@@ -37,6 +37,9 @@ const Questions = ({ quiz }) => {
   useEffect(() => {
     setQuestions(quiz?.questions);
     quiz?.questions.forEach(question => {
+      if(question.type ==='Hotspot'){
+        console.log(question)
+      }
     });
   }, [quiz?.questions]);
 
