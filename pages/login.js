@@ -95,16 +95,15 @@ export default function Login() {
         <Box
           rounded={"lg"}
           bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
+          boxShadow={"2xl"}
           p={8}
           borderColor="#00237c"
-          borderWidth={8}
         >
           <Flex justify="center" align="center">
             <Heading
               fontSize={"lg"}
-              bg="#00237c"
-              color="#ffffff"
+              bg="#DCDCDC	"
+              color="white"
               padding={4}
               borderRadius="4px"
               width={["100%"]}

@@ -102,13 +102,13 @@ export default function Register() {
           boxShadow={"lg"}
           p={8}
           borderColor="#00237c"
-          borderWidth={8}
+          borderWidth={1}
         >
           <Flex justify="center" align="center">
             <Heading
               fontSize={"lg"}
-              bg="#00237c"
-              color="#ffffff"
+              bg="#DCDCDC	"
+              color="white"
               padding={3}
               borderRadius="4px"
               width={["100%"]}
